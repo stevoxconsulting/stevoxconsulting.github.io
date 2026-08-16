@@ -4,157 +4,671 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Stevox Consulting Inc. | Data Engineering, Analytics & AI Governance</title>
+  <title>Stevox Consulting Inc. | Data Engineering, Analytics and AI Governance</title>
 
-  <meta name="description" content="Stevox Consulting helps organizations build reliable data platforms, modernize analytics, strengthen data governance, and prepare for responsible AI adoption.">
+  <meta
+    name="description"
+    content="Stevox Consulting helps organizations modernize data platforms, improve analytics, strengthen data governance, and prepare for responsible AI adoption."
+  >
+
+  <meta property="og:title" content="Stevox Consulting Inc.">
+  <meta
+    property="og:description"
+    content="Data Engineering. Analytics. AI Governance."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://stevox.ca">
+
+  <link rel="icon" href="Logo.png">
 
   <style>
+    :root {
+      --navy: #102a43;
+      --navy-dark: #0b1f33;
+      --cyan: #18c7d8;
+      --cyan-soft: #e9fbfd;
+      --text: #172033;
+      --muted: #5f6f82;
+      --light: #f7f9fc;
+      --border: #e4e9ef;
+      --white: #ffffff;
+      --max-width: 1180px;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      color: #172033;
-      background: #ffffff;
-      line-height: 1.6;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.65;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
     }
 
     .container {
-      width: min(1100px, 90%);
-      margin: auto;
-    }
-
-    header {
-      padding: 24px 0;
-      border-bottom: 1px solid #e8e8e8;
-    }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .brand {
-      font-size: 21px;
-      font-weight: 700;
-    }
-
-    .brand span {
-      font-weight: 400;
-    }
-
-    nav a {
-      color: #172033;
-      text-decoration: none;
-      margin-left: 28px;
-      font-size: 15px;
-    }
-
-    .hero {
-      padding: 110px 0 100px;
-      max-width: 850px;
-    }
-
-    .eyebrow {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: clamp(42px, 7vw, 72px);
-      line-height: 1.05;
-      letter-spacing: -2px;
-      margin-bottom: 28px;
-    }
-
-    .hero p {
-      font-size: 20px;
-      color: #536078;
-      max-width: 720px;
-      margin-bottom: 35px;
-    }
-
-    .button {
-      display: inline-block;
-      background: #172033;
-      color: white;
-      text-decoration: none;
-      padding: 14px 24px;
-      border-radius: 5px;
-      font-weight: 600;
+      width: min(var(--max-width), 90%);
+      margin: 0 auto;
     }
 
     .section {
-      padding: 80px 0;
-      border-top: 1px solid #e8e8e8;
+      padding: 90px 0;
     }
 
-    .section h2 {
-      font-size: 34px;
-      margin-bottom: 15px;
+    .section-light {
+      background: var(--light);
     }
 
-    .intro {
-      color: #536078;
-      max-width: 700px;
-      margin-bottom: 40px;
+    .section-label {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
     }
 
-    .services {
+    .section-title {
+      max-width: 800px;
+      margin-bottom: 18px;
+      color: var(--navy-dark);
+      font-size: clamp(34px, 5vw, 50px);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+    }
+
+    .section-intro {
+      max-width: 780px;
+      margin-bottom: 48px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .navbar {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .brand-logo img {
+      width: auto;
+      height: 46px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover {
+      color: var(--cyan);
+    }
+
+    .nav-contact {
+      padding: 11px 18px;
+      color: var(--white) !important;
+      background: var(--navy);
+      border-radius: 7px;
+    }
+
+    .nav-contact:hover {
+      background: var(--navy-dark);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 115px 0 105px;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(24, 199, 216, 0.13), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    }
+
+    .hero-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 25px;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+      align-items: center;
+      gap: 70px;
     }
 
-    .service {
-      padding: 28px;
-      border: 1px solid #e2e5ea;
-      border-radius: 8px;
+    .hero-kicker {
+      margin-bottom: 20px;
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
     }
 
-    .service h3 {
-      margin-bottom: 10px;
+    .hero h1 {
+      max-width: 800px;
+      margin-bottom: 28px;
+      color: var(--navy-dark);
+      font-size: clamp(48px, 7vw, 78px);
+      line-height: 1.02;
+      letter-spacing: -3px;
+    }
+
+    .hero h1 span {
+      color: var(--cyan);
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin-bottom: 34px;
+      color: var(--muted);
       font-size: 20px;
     }
 
-    .service p {
-      color: #536078;
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
     }
 
-    .about {
-      max-width: 780px;
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 24px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      font-weight: 750;
+      text-decoration: none;
+      transition: 0.2s ease;
     }
 
-    .about p {
-      margin-bottom: 18px;
-      color: #536078;
+    .button-primary {
+      color: var(--white);
+      background: var(--navy);
     }
 
-    footer {
-      border-top: 1px solid #e8e8e8;
-      padding: 35px 0;
-      color: #697386;
+    .button-primary:hover {
+      background: var(--navy-dark);
+      transform: translateY(-1px);
+    }
+
+    .button-secondary {
+      color: var(--navy);
+      background: var(--white);
+      border-color: var(--border);
+    }
+
+    .button-secondary:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .hero-panel {
+      padding: 34px;
+      background: var(--navy-dark);
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(16, 42, 67, 0.17);
+    }
+
+    .hero-panel h2 {
+      margin-bottom: 22px;
+      color: var(--white);
+      font-size: 22px;
+    }
+
+    .hero-panel ul {
+      list-style: none;
+    }
+
+    .hero-panel li {
+      position: relative;
+      padding: 14px 0 14px 28px;
+      color: #d8e3ec;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-panel li:last-child {
+      border-bottom: 0;
+    }
+
+    .hero-panel li::before {
+      content: "";
+      position: absolute;
+      top: 23px;
+      left: 0;
+      width: 9px;
+      height: 9px;
+      background: var(--cyan);
+      border-radius: 50%;
+    }
+
+    .credibility {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .credibility-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .credential {
+      padding: 28px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .credential:last-child {
+      border-right: 0;
+    }
+
+    .credential strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--navy-dark);
+      font-size: 23px;
+    }
+
+    .credential span {
+      color: var(--muted);
       font-size: 14px;
     }
 
-    @media (max-width: 700px) {
-      .services {
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .service-card {
+      padding: 34px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      transition: 0.2s ease;
+    }
+
+    .service-card:hover {
+      border-color: rgba(24, 199, 216, 0.6);
+      box-shadow: 0 14px 40px rgba(16, 42, 67, 0.07);
+      transform: translateY(-3px);
+    }
+
+    .service-number {
+      display: inline-flex;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 22px;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      background: var(--cyan-soft);
+      border-radius: 8px;
+      font-weight: 800;
+    }
+
+    .service-card h3 {
+      margin-bottom: 12px;
+      color: var(--navy-dark);
+      font-size: 23px;
+    }
+
+    .service-card p {
+      color: var(--muted);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 70px;
+      align-items: start;
+    }
+
+    .about-highlight {
+      padding: 36px;
+      background: var(--navy-dark);
+      border-radius: 16px;
+    }
+
+    .about-highlight h3 {
+      margin-bottom: 16px;
+      color: var(--white);
+      font-size: 26px;
+    }
+
+    .about-highlight p {
+      color: #cfdae5;
+    }
+
+    .about-copy p {
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .leadership-card {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: 50px;
+      align-items: start;
+      padding: 42px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .leadership-profile {
+      padding: 30px;
+      background: var(--navy-dark);
+      border-radius: 14px;
+    }
+
+    .leadership-profile h3 {
+      margin-bottom: 6px;
+      color: var(--white);
+      font-size: 28px;
+    }
+
+    .leadership-profile .role {
+      margin-bottom: 22px;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .leadership-profile p {
+      color: #cfdae5;
+    }
+
+    .leadership-copy p {
+      margin-bottom: 19px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .profile-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .profile-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--navy);
+      background: var(--white);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .profile-link:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+    }
+
+    .expertise-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .expertise-card {
+      padding: 30px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .expertise-card h3 {
+      margin-bottom: 14px;
+      color: var(--navy-dark);
+      font-size: 21px;
+    }
+
+    .expertise-card p {
+      color: var(--muted);
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .why-card {
+      padding: 30px 0;
+      border-top: 3px solid var(--cyan);
+    }
+
+    .why-card h3 {
+      margin-bottom: 12px;
+      color: var(--navy-dark);
+      font-size: 21px;
+    }
+
+    .why-card p {
+      color: var(--muted);
+    }
+
+    .contact-section {
+      padding: 90px 0;
+      background: var(--navy-dark);
+    }
+
+    .contact-box {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      align-items: center;
+      gap: 50px;
+    }
+
+    .contact-box .section-label {
+      color: var(--cyan);
+    }
+
+    .contact-box h2 {
+      margin-bottom: 18px;
+      color: var(--white);
+      font-size: clamp(36px, 5vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+    }
+
+    .contact-box p {
+      max-width: 700px;
+      color: #cbd7e2;
+      font-size: 18px;
+    }
+
+    .contact-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .contact-actions .button {
+      width: 100%;
+    }
+
+    .contact-actions .button-primary {
+      color: var(--navy-dark);
+      background: var(--cyan);
+    }
+
+    .contact-actions .button-primary:hover {
+      background: #4bd5e1;
+    }
+
+    .contact-email {
+      text-align: center;
+      color: #cbd7e2;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    footer {
+      padding: 34px 0;
+      background: #071725;
+      color: #a9b7c4;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .footer-brand {
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+    }
+
+    .footer-links a {
+      color: #a9b7c4;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--cyan);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .about-grid,
+      .leadership-card,
+      .contact-box {
         grid-template-columns: 1fr;
       }
 
-      nav .links {
+      .credibility-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .credential:nth-child(2) {
+        border-right: 0;
+      }
+
+      .credential:nth-child(-n+2) {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .services-grid,
+      .expertise-grid,
+      .why-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel {
+        max-width: 620px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .section {
+        padding: 70px 0;
+      }
+
+      .navbar {
+        min-height: 70px;
+      }
+
+      .brand-logo img {
+        height: 40px;
+      }
+
+      .nav-links a:not(.nav-contact) {
         display: none;
       }
 
       .hero {
-        padding: 75px 0;
+        padding: 80px 0 70px;
+      }
+
+      .hero h1 {
+        letter-spacing: -2px;
+      }
+
+      .hero-copy {
+        font-size: 18px;
+      }
+
+      .credibility-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .credential {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .credential:last-child {
+        border-bottom: 0;
+      }
+
+      .leadership-card {
+        padding: 26px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -163,122 +677,457 @@
 <body>
 
 <header>
-  <div class="container">
-    <nav>
-      <div class="brand">STEVOX <span>CONSULTING</span></div>
+  <div class="container navbar">
 
-      <div class="links">
-        <a href="#services">Services</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </div>
+    <a href="#top" class="brand-logo" aria-label="Stevox Consulting home">
+      <img src="stevox-logo-horizontal.png" alt="Stevox">
+    </a>
+
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#leadership">Leadership</a>
+      <a href="#expertise">Expertise</a>
+      <a href="#contact" class="nav-contact">Contact</a>
     </nav>
+
   </div>
 </header>
 
-<main>
+<main id="top">
 
-  <div class="container">
-    <section class="hero">
+  <section class="hero">
+    <div class="container hero-grid">
 
-      <div class="eyebrow">Stevox Consulting Inc.</div>
+      <div>
+        <div class="hero-kicker">Stevox Consulting Inc.</div>
 
-      <h1>Data Engineering.<br>Analytics.<br>AI Governance.</h1>
+        <h1>
+          Data Engineering.<br>
+          Analytics.<br>
+          <span>AI Governance.</span>
+        </h1>
 
-      <p>
-        Helping organizations build reliable data platforms,
-        modernize analytics, strengthen data governance,
-        and prepare their data environments for responsible AI.
-      </p>
+        <p class="hero-copy">
+          We help organizations build reliable data platforms,
+          modernize analytics, strengthen governance, and prepare
+          their data environments for responsible AI adoption.
+        </p>
 
-      <a class="button" href="#contact">Start a Conversation</a>
+        <div class="hero-actions">
+          <a href="#contact" class="button button-primary">
+            Start a Conversation
+          </a>
 
-    </section>
-  </div>
+          <a href="#services" class="button button-secondary">
+            Explore Services
+          </a>
+        </div>
+      </div>
 
-  <section class="section" id="services">
+      <aside class="hero-panel">
+        <h2>Where we create value</h2>
+
+        <ul>
+          <li>Modern data platform architecture</li>
+          <li>Reliable data engineering and transformation</li>
+          <li>Analytics and reporting modernization</li>
+          <li>Data quality, governance, and security</li>
+          <li>Responsible AI and data readiness</li>
+        </ul>
+      </aside>
+
+    </div>
+  </section>
+
+  <section class="credibility">
+    <div class="container credibility-grid">
+
+      <div class="credential">
+        <strong>12+ Years</strong>
+        <span>Technology experience</span>
+      </div>
+
+      <div class="credential">
+        <strong>Enterprise</strong>
+        <span>Data and analytics delivery</span>
+      </div>
+
+      <div class="credential">
+        <strong>D.Sc.</strong>
+        <span>Information Technology</span>
+      </div>
+
+      <div class="credential">
+        <strong>Ottawa</strong>
+        <span>Canadian consultancy</span>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section section-light" id="services">
     <div class="container">
 
-      <h2>What We Do</h2>
+      <span class="section-label">Services</span>
 
-      <p class="intro">
-        Practical consulting services for organizations seeking
-        reliable, scalable, and well governed data environments.
+      <h2 class="section-title">
+        Practical solutions for complex data environments.
+      </h2>
+
+      <p class="section-intro">
+        Stevox combines engineering, architecture, analytics,
+        governance, and strategic advisory to help organizations
+        improve how data is built, managed, and used.
       </p>
 
-      <div class="services">
+      <div class="services-grid">
 
-        <div class="service">
+        <article class="service-card">
+          <div class="service-number">01</div>
           <h3>Data Platform Assessment</h3>
           <p>
-            Assess existing data architecture, pipelines, quality,
-            governance, and analytics capabilities and develop a
-            practical modernization roadmap.
+            Evaluate architecture, pipelines, data models, quality,
+            governance, analytics, and operational practices, then
+            develop a prioritized modernization roadmap.
           </p>
-        </div>
+        </article>
 
-        <div class="service">
+        <article class="service-card">
+          <div class="service-number">02</div>
           <h3>Data Engineering Modernization</h3>
           <p>
-            Design and modernize cloud data pipelines, transformation
-            workflows, data models, and engineering practices.
+            Design and improve data pipelines, transformation
+            workflows, orchestration, deployment, testing,
+            observability, and production reliability.
           </p>
-        </div>
+        </article>
 
-        <div class="service">
+        <article class="service-card">
+          <div class="service-number">03</div>
           <h3>Analytics Modernization</h3>
           <p>
-            Improve data warehouses, semantic models, reporting
-            environments, and analytics delivery.
+            Improve analytical models, reporting environments,
+            decision support, and trusted data delivery across
+            operational and executive use cases.
           </p>
-        </div>
+        </article>
 
-        <div class="service">
+        <article class="service-card">
+          <div class="service-number">04</div>
+          <h3>Data Governance and Quality</h3>
+          <p>
+            Strengthen data quality, lineage, access controls,
+            privacy, security, documentation, and accountability
+            across the data lifecycle.
+          </p>
+        </article>
+
+        <article class="service-card">
+          <div class="service-number">05</div>
           <h3>AI Data Readiness</h3>
           <p>
-            Evaluate whether data architecture, quality, governance,
-            security, and operational practices are ready to support
-            responsible AI initiatives.
+            Assess whether data, governance, privacy, security,
+            and operating practices are ready to support
+            responsible AI adoption.
           </p>
-        </div>
+        </article>
+
+        <article class="service-card">
+          <div class="service-number">06</div>
+          <h3>Architecture and Advisory</h3>
+          <p>
+            Provide senior technical guidance on data strategy,
+            architecture decisions, modernization priorities,
+            platform selection, and delivery planning.
+          </p>
+        </article>
 
       </div>
     </div>
   </section>
 
   <section class="section" id="about">
-    <div class="container about">
+    <div class="container about-grid">
 
-      <h2>About Stevox</h2>
+      <div class="about-highlight">
+        <h3>Focused on reliable, governed, and scalable data.</h3>
+        <p>
+          Stevox Consulting helps organizations simplify complex
+          data environments and build stronger foundations for
+          analytics, operational decision making, and responsible AI.
+        </p>
+      </div>
 
-      <p>
-        Stevox Consulting Inc. is a Canadian technology consulting
-        company specializing in data engineering, analytics,
-        data architecture, governance, and AI readiness.
-      </p>
+      <div class="about-copy">
 
-      <p>
-        We help organizations turn complex and fragmented data
-        environments into reliable, governed, and scalable platforms
-        that support better analytics and technology decisions.
-      </p>
+        <span class="section-label">About Stevox</span>
+
+        <h2 class="section-title">
+          A specialized technology consultancy built around data.
+        </h2>
+
+        <p>
+          Stevox Consulting Inc. is an Ottawa based consulting
+          company focused on data engineering, analytics,
+          architecture, governance, and AI readiness.
+        </p>
+
+        <p>
+          We work with organizations that need to modernize
+          fragmented data environments, improve reliability,
+          strengthen governance, or establish better foundations
+          for analytics and emerging AI use cases.
+        </p>
+
+        <p>
+          Our approach combines hands on engineering with
+          architecture and advisory. The objective is not simply
+          to introduce more technology, but to create data
+          environments that are understandable, maintainable,
+          secure, and useful to the business.
+        </p>
+
+      </div>
 
     </div>
   </section>
 
-  <section class="section" id="contact">
+  <section class="section section-light" id="leadership">
     <div class="container">
 
-      <h2>Let's Talk</h2>
+      <span class="section-label">Leadership</span>
 
-      <p class="intro">
-        Have a data platform, analytics, governance, or AI readiness
-        challenge? Contact Stevox Consulting to discuss your needs.
+      <h2 class="section-title">
+        Senior technical leadership grounded in delivery.
+      </h2>
+
+      <div class="leadership-card">
+
+        <div class="leadership-profile">
+          <h3>Stephen Fabeyo, D.Sc.</h3>
+          <div class="role">Founder and Principal Consultant</div>
+
+          <p>
+            Senior data and analytics professional with experience
+            spanning enterprise engineering, analytics, cloud
+            architecture, governance, and responsible AI.
+          </p>
+        </div>
+
+        <div class="leadership-copy">
+
+          <p>
+            Stephen Fabeyo, D.Sc., is a senior data and analytics
+            engineer with more than 12 years of professional
+            experience across engineering and technology, including
+            more than 8 years focused on data engineering and analytics.
+          </p>
+
+          <p>
+            His experience includes enterprise data platforms,
+            cloud architecture, data modeling, analytics delivery,
+            governance, security, healthcare data, financial data,
+            and large scale modernization initiatives.
+          </p>
+
+          <p>
+            Stephen holds a Doctor of Science in Information
+            Technology. His doctoral research and publications
+            focus on algorithmic transparency, fairness,
+            explainable artificial intelligence, and bias detection
+            in automated employment decision systems.
+          </p>
+
+          <p>
+            He also contributes to professional technology
+            governance and standards through leadership and
+            service with CIPS Ontario and CIPS National.
+          </p>
+
+          <div class="profile-links">
+
+            <a
+              class="profile-link"
+              href="https://www.linkedin.com/in/stephenfabeyo"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </a>
+
+            <a
+              class="profile-link"
+              href="https://github.com/stevefabz"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+
+            <a
+              class="profile-link"
+              href="mailto:stephen.fabeyo@stevox.ca"
+            >
+              Email Stephen
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" id="expertise">
+    <div class="container">
+
+      <span class="section-label">Expertise</span>
+
+      <h2 class="section-title">
+        Expertise across the modern data lifecycle.
+      </h2>
+
+      <p class="section-intro">
+        Stevox focuses on the capabilities organizations need to
+        build trusted data foundations, improve decision making,
+        operate reliably, and adopt new technologies responsibly.
       </p>
 
-      <a class="button" href="mailto:stephen@stevox.ca">
-        Contact Stevox
-      </a>
+      <div class="expertise-grid">
+
+        <article class="expertise-card">
+          <h3>Enterprise Data Platforms</h3>
+          <p>
+            Architecture, modernization, data integration,
+            transformation, modeling, orchestration, reliability,
+            and scalable enterprise data delivery.
+          </p>
+        </article>
+
+        <article class="expertise-card">
+          <h3>Analytics and Decision Support</h3>
+          <p>
+            Trusted analytical models, executive reporting,
+            operational analytics, business intelligence,
+            and reliable access to decision ready data.
+          </p>
+        </article>
+
+        <article class="expertise-card">
+          <h3>Data Governance and Quality</h3>
+          <p>
+            Data quality, lineage, access control, privacy,
+            documentation, security, auditability, and governed
+            data delivery.
+          </p>
+        </article>
+
+        <article class="expertise-card">
+          <h3>Cloud Data Modernization</h3>
+          <p>
+            Modernization of legacy and fragmented data environments
+            into scalable cloud based architectures designed for
+            reliability, performance, and maintainability.
+          </p>
+        </article>
+
+        <article class="expertise-card">
+          <h3>Healthcare and Regulated Data</h3>
+          <p>
+            Data architecture and analytics in environments where
+            privacy, interoperability, security, compliance, and
+            sensitive information require stronger controls.
+          </p>
+        </article>
+
+        <article class="expertise-card">
+          <h3>Responsible AI and AI Readiness</h3>
+          <p>
+            AI governance, explainability, fairness, algorithmic
+            transparency, data readiness, and responsible adoption
+            practices for organizations preparing to use AI.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-light">
+    <div class="container">
+
+      <span class="section-label">Why Stevox</span>
+
+      <h2 class="section-title">
+        Engineering discipline with business context.
+      </h2>
+
+      <div class="why-grid">
+
+        <article class="why-card">
+          <h3>Practical delivery</h3>
+          <p>
+            Recommendations are designed around what teams can
+            realistically implement, operate, support, and maintain.
+          </p>
+        </article>
+
+        <article class="why-card">
+          <h3>Governance by design</h3>
+          <p>
+            Reliability, security, quality, privacy, and governance
+            are treated as part of the architecture rather than
+            added after implementation.
+          </p>
+        </article>
+
+        <article class="why-card">
+          <h3>Designed for growth</h3>
+          <p>
+            Solutions are designed to support future data volumes,
+            additional use cases, analytics, organizational growth,
+            and responsible AI adoption.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <div class="container contact-box">
+
+      <div>
+        <span class="section-label">Contact</span>
+
+        <h2>
+          Have a data challenge worth solving?
+        </h2>
+
+        <p>
+          Contact Stevox Consulting to discuss your data platform,
+          analytics, governance, modernization, architecture,
+          or AI readiness needs.
+        </p>
+      </div>
+
+      <div class="contact-actions">
+
+        <a
+          href="mailto:contact@stevox.ca"
+          class="button button-primary"
+        >
+          Contact Stevox
+        </a>
+
+        <div class="contact-email">
+          contact@stevox.ca
+        </div>
+
+      </div>
 
     </div>
   </section>
@@ -286,8 +1135,21 @@
 </main>
 
 <footer>
-  <div class="container">
-    © 2026 Stevox Consulting Inc. Ottawa, Ontario, Canada.
+  <div class="container footer-inner">
+
+    <div>
+      <div class="footer-brand">Stevox Consulting Inc.</div>
+      <div>Ottawa, Ontario, Canada.</div>
+      <div>© 2026 Stevox Consulting Inc. All rights reserved.</div>
+    </div>
+
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#leadership">Leadership</a>
+      <a href="#contact">Contact</a>
+    </div>
+
   </div>
 </footer>
 
