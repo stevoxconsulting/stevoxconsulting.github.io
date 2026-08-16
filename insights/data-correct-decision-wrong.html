@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Beyond Data Quality: Is the Data Fit for the Decision? | Stevox Insights</title><meta name="description" content="Data quality tells you the pipeline worked. It does not tell you whether a metric is fit for the decision it's shaping. A framework for the questions quality controls can't answer."><link rel="canonical" href="https://stevox.ca/insights/data-correct-decision-wrong.html"><meta property="og:title" content="Beyond Data Quality: Is the Data Fit for the Decision? | Stevox Insights"><meta property="og:description" content="Data quality tells you the pipeline worked. It does not tell you whether a metric is fit for the decision it's shaping."><meta property="og:type" content="article"><meta property="og:url" content="https://stevox.ca/insights/data-correct-decision-wrong.html"><meta property="og:image" content="https://stevox.ca/stevox-logo-horizontal.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/Logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/insights-lab.css"></head><body><a href="#main" class="skip-link">Skip to content</a><header><div class="container navbar"><a href="/" class="brand-logo" aria-label="Stevox Consulting home"><img src="/stevox-logo-horizontal.png" alt="Stevox"></a><button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button><nav class="nav-links" id="navLinks" aria-label="Primary navigation"><a href="/" data-page="home">Home</a><a href="/services/" data-page="services">Services</a><a href="/about/" data-page="about">About</a><a href="/leadership/" data-page="leadership">Leadership</a><a href="/expertise/" data-page="expertise">Expertise</a><a href="/insights/" data-page="insights">Insights</a><a href="/lab/" data-page="lab">Lab</a><a href="/contact/" class="nav-contact" data-page="contact">Contact</a></nav></div></header>
+<main id="main">
+  <article class="sil-article-page">
+    <div class="container sil-article-shell">
+      <header class="sil-article-header">
+        <a class="sil-back" href="/insights/">← Back to Insights</a>
+        <div class="sil-meta"><span>Data Governance</span><span>Decision Systems</span><span>5 min read</span></div>
+        <h1>Beyond Data Quality: Is the Data Fit for the Decision?</h1>
+        <p class="sil-deck">Data quality tells you the pipeline worked. It does not tell you whether the metric is right for the decision it is shaping.</p>
+        <div class="sil-byline">Stevox Consulting Inc.</div>
+      </header>
+
+      <div class="sil-article-body">
+        <p>Data quality is a well established discipline. Organizations monitor completeness, accuracy, consistency, timeliness, and validity. Data teams build tests into pipelines, reconcile outputs against source systems, and monitor production workloads for failures.</p>
+
+        <p>These controls answer an important question, can we trust the data. There is another question that receives less attention, is this data fit for the decision being made.</p>
+
+        <div class="sil-pullquote">
+          <p>Can we trust the data?</p>
+          <p class="sil-pullquote-sub">And a question that matters just as much: is this data fit for the decision being made?</p>
+        </div>
+
+        <p>A dataset can pass every technical quality check and still provide a poor basis for a business decision. Nothing has to be broken. The pipeline can run successfully. The transformation can be correct. The business rule can be implemented exactly as specified. The problem may instead be what the organization has chosen to measure.</p>
+
+        <h2>Consider a customer profitability metric.</h2>
+        <p>Suppose an organization calculates customer profitability using revenue, product costs, and transaction costs. The source data is complete. The calculations reconcile. The transformation logic has been tested. Finance has approved the formula. The metric is technically sound.</p>
+
+        <p>Now suppose certain customers require significantly more servicing than others, but those service costs are managed in another system and are not included in the profitability calculation. The reported profitability figure is still correct according to its definition. But using that figure to determine customer investment, pricing, or service strategy could lead to poor decisions.</p>
+
+        <p>Adding more pipeline tests will not solve the problem. The issue is not data quality. It is <strong>decision fitness</strong>.</p>
+
+        <h2>Quality controls cannot validate the question.</h2>
+        <p>Data engineering controls are designed primarily to determine whether data behaves as expected. They can tell us that a field is populated, a value falls within an expected range, a transformation produced the intended result, or an aggregate reconciles with its source.</p>
+
+        <p>They cannot independently determine whether the definition being implemented represents the business question well enough. That requires context. What is the metric intended to support. What does it include and exclude. Under what conditions is it useful. Where could it become misleading.</p>
+
+        <p>These questions become increasingly important as organizations reuse the same data products across dashboards, operational processes, analytics, and automated decision systems. A metric designed for one purpose can easily acquire authority beyond the purpose for which it was designed.</p>
+
+        <h2>This does not change who owns the decision.</h2>
+        <p>The implication is not that data engineers should determine whether a business decision is correct. Business owners remain accountable for business decisions.</p>
+
+        <p>The opportunity for data teams is to make the assumptions surrounding important data products more visible. For critical metrics and datasets, technical documentation can be complemented by a small amount of decision context:</p>
+
+        <ol>
+          <li>What is this data product intended to represent.</li>
+          <li>What decisions is it designed to support.</li>
+          <li>What important information does it exclude.</li>
+          <li>Who owns the business definition.</li>
+          <li>What limitations should consumers understand before using it.</li>
+        </ol>
+
+        <p>This is not another governance layer. It is useful context attached to data that already carries business significance.</p>
+
+        <h2>From trustworthy data to trustworthy use.</h2>
+        <p>Strong data platforms need technical quality. Without reliable pipelines, controlled transformations, clear ownership, and effective monitoring, confidence deteriorates quickly. But technical quality establishes only that the data was produced correctly. It does not establish that every use of that data is appropriate.</p>
+
+        <p>As data becomes more deeply embedded in operational and strategic decisions, mature organizations will need to manage both sides of that distinction.</p>
+
+        <div class="sil-pullquote">
+          <p>Can we trust the data?</p>
+          <p class="sil-pullquote-sub">And increasingly: can we trust how it is being used?</p>
+        </div>
+      </div>
+    </div>
+  </article>
+</main>
+<footer><div class="container footer-inner"><div><div class="footer-brand">Stevox Consulting Inc.</div><div>Ottawa, Ontario, Canada.</div><div>© 2026 Stevox Consulting Inc. All rights reserved.</div></div><div class="footer-links"><a href="/services/">Services</a><a href="/about/">About</a><a href="/leadership/">Leadership</a><a href="/expertise/">Expertise</a><a href="/insights/">Insights</a><a href="/lab/">Lab</a><a href="/contact/">Contact</a></div></div></footer><script src="/script.js"></script><script>document.querySelector('[data-page="insights"]').classList.add('active');</script></body></html>
