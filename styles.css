@@ -56,10 +56,10 @@ header{position:sticky;top:0;z-index:1000;background:rgba(254,254,253,.92);borde
 
 .pipeline{width:100%}
 .pipeline text{font-family:var(--mono);font-size:11.5px;fill:var(--muted);letter-spacing:.3px}
-.pipeline .track{stroke:var(--line);stroke-width:2;fill:none}
-.pipeline .flow{stroke:var(--cyan);stroke-width:2;fill:none;stroke-dasharray:6 10;animation:flow 3.2s linear infinite}
-.pipeline .node circle{fill:var(--paper);stroke:var(--ink);stroke-width:2}
-.pipeline .node.active circle{fill:var(--cyan-soft);stroke:var(--cyan-dim)}
+.pipeline .track{stroke:#e3e9f0;stroke-width:2;fill:none}
+.pipeline .flow{stroke:#17c3d6;stroke-width:2;fill:none;stroke-dasharray:6 10;animation:flow 3.2s linear infinite}
+.pipeline .node circle{fill:var(--paper);stroke:#0b1d2e;stroke-width:2}
+.pipeline .node.active circle{fill:#e8fafc;stroke:#0ea5b7}
 @keyframes flow{to{stroke-dashoffset:-64}}
 @media(prefers-reduced-motion:reduce){.pipeline .flow{animation:none}}
 
