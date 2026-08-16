@@ -1,15 +1,1 @@
-
-const toggle = document.getElementById("navToggle");
-const links = document.getElementById("navLinks");
-if (toggle && links) {
-  toggle.addEventListener("click", function () {
-    const open = links.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
-  });
-  links.querySelectorAll("a").forEach(function (link) {
-    link.addEventListener("click", function () {
-      links.classList.remove("open");
-      toggle.setAttribute("aria-expanded", "false");
-    });
-  });
-}
+const toggle=document.getElementById("navToggle");const links=document.getElementById("navLinks");if(toggle&&links){toggle.addEventListener("click",function(){const open=links.classList.toggle("open");toggle.setAttribute("aria-expanded",open?"true":"false")});links.querySelectorAll("a").forEach(function(link){link.addEventListener("click",function(){links.classList.remove("open");toggle.setAttribute("aria-expanded","false")})})}
