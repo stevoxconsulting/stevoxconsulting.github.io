@@ -117,3 +117,63 @@ footer{padding:32px 0;background:#071522;color:#93a4b3;font-size:14px}.footer-in
 @media(max-width:720px){.section{padding:64px 0}.navbar{min-height:68px}.brand-logo img{height:32px}.nav-toggle{display:inline-flex}.nav-links{position:fixed;inset:68px 0 auto 0;flex-direction:column;align-items:stretch;gap:0;background:var(--paper);border-bottom:1px solid var(--line);padding:8px 6%;transform:translateY(-8px);opacity:0;pointer-events:none;transition:.18s ease}.nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}.nav-links a:not(.nav-contact){padding:14px 0;border-bottom:1px solid var(--line)}.nav-links .nav-contact{margin:14px 0;text-align:center}.hero{padding:64px 0 56px}.hero h1{letter-spacing:-1.4px}.hero-copy{font-size:17.5px}.credibility-grid{grid-template-columns:1fr}.credential{border-right:0;border-bottom:1px solid var(--line)}.credential:last-child{border-bottom:0}.leadership-card{padding:24px}
   .leader-visual{position:static;max-width:360px}
   .headshot-card{position:static;max-width:360px}.footer-inner{flex-direction:column;align-items:flex-start}}
+
+/* V6 Leadership page: compact headshot and separate navigation tab. */
+.leader-profile-grid{
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr);
+  gap:48px;
+  align-items:start;
+}
+.leader-photo-panel{
+  width:240px;
+}
+.leader-headshot-small{
+  width:220px;
+  height:275px;
+  object-fit:cover;
+  object-position:center top;
+  border-radius:12px;
+  border:1px solid var(--line);
+  box-shadow:0 10px 28px rgba(11,29,46,.08);
+  background:#eef2f5;
+}
+.leader-caption{
+  width:220px;
+  padding-top:14px;
+}
+.leader-caption strong{
+  display:block;
+  color:var(--ink);
+  font-family:"Space Grotesk",ui-sans-serif,system-ui,sans-serif;
+  font-size:18px;
+  line-height:1.25;
+}
+.leader-caption span{
+  display:block;
+  margin-top:4px;
+  color:var(--cyan-dim);
+  font-size:13px;
+  font-weight:700;
+}
+.leader-story{
+  max-width:780px;
+}
+.leader-story p{
+  margin-bottom:18px;
+  color:var(--muted);
+  font-size:16.5px;
+}
+.leader-story h3{
+  margin:34px 0 12px;
+  padding-top:28px;
+  border-top:1px solid var(--line);
+  color:var(--ink);
+  font-size:22px;
+}
+@media (max-width:800px){
+  .leader-profile-grid{grid-template-columns:1fr;gap:30px}
+  .leader-photo-panel{width:200px}
+  .leader-headshot-small{width:180px;height:225px}
+  .leader-caption{width:180px}
+}
