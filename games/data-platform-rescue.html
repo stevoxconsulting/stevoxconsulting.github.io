@@ -1,65 +1,59 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Platform Rescue | Stevox Lab</title>
-<meta name="description" content="Play Data Platform Rescue, an interactive Stevox Lab simulation about data architecture, governance, reliability, and AI readiness.">
-<link rel="canonical" href="https://stevox.ca/games/data-platform-rescue.html">
-<meta property="og:title" content="Data Platform Rescue | Stevox Lab">
-<meta property="og:description" content="You have 5 decisions and a limited budget. Can you rescue the data platform?">
-<meta property="og:type" content="website"><meta property="og:url" content="https://stevox.ca/games/data-platform-rescue.html">
-<meta property="og:image" content="https://stevox.ca/stevox-logo-horizontal.png">
-<link rel="icon" href="../Logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css">
-</head><body><a href="#main" class="skip-link">Skip to content</a><header><div class="container navbar"><a href="../index.html" class="brand-logo" aria-label="Stevox Consulting home"><img src="../stevox-logo-horizontal.png" alt="Stevox"></a><button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button><nav class="nav-links" id="navLinks" aria-label="Primary navigation"><a href="../index.html" data-page="home">Home</a><a href="../services.html" data-page="services">Services</a><a href="../about.html" data-page="about">About</a><a href="../leadership.html" data-page="leadership">Leadership</a><a href="../expertise.html" data-page="expertise">Expertise</a><a href="../insights.html" data-page="insights">Insights</a><a href="../lab.html" data-page="lab">Lab</a><a href="../contact.html" class="nav-contact" data-page="contact">Contact</a></nav></div></header>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Data Platform Rescue | Stevox Lab</title><meta name="description" content="An interactive Stevox Lab simulation about data architecture, governance, reliability, and AI readiness."><link rel="canonical" href="https://stevox.ca/games/data-platform-rescue.html"><meta property="og:title" content="Data Platform Rescue | Stevox Lab"><meta property="og:description" content="An interactive Stevox Lab simulation about data architecture, governance, reliability, and AI readiness."><meta property="og:type" content="website"><meta property="og:url" content="https://stevox.ca/games/data-platform-rescue.html"><meta property="og:image" content="https://stevox.ca/stevox-logo-horizontal.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="../Logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../insights-lab.css"></head><body><a href="#main" class="skip-link">Skip to content</a><header><div class="container navbar"><a href="../index.html" class="brand-logo" aria-label="Stevox Consulting home"><img src="../stevox-logo-horizontal.png" alt="Stevox"></a><button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button><nav class="nav-links" id="navLinks" aria-label="Primary navigation"><a href="../index.html" data-page="home">Home</a><a href="../services.html" data-page="services">Services</a><a href="../about.html" data-page="about">About</a><a href="../leadership.html" data-page="leadership">Leadership</a><a href="../expertise.html" data-page="expertise">Expertise</a><a href="../insights.html" data-page="insights">Insights</a><a href="../lab.html" data-page="lab">Lab</a><a href="../contact.html" class="nav-contact" data-page="contact">Contact</a></nav></div></header>
 <main id="main">
-  <section class="game-page">
-    <div class="container game-shell">
-      <a class="article-back" href="../lab.html">← Back to Stevox Lab</a>
-
-      <div class="game-heading">
+  <section class="sil-game-page">
+    <div class="container sil-game-shell">
+      <a class="sil-back" href="../lab.html">← Back to Stevox Lab</a>
+      <div class="sil-game-heading">
         <span class="eyebrow">Interactive simulation</span>
         <h1>Data Platform Rescue</h1>
-        <p>You are the new technology advisor for Northstar Services. The data platform is unstable, executives do not trust the dashboards, and leadership wants an AI initiative in 6 months. You have <strong>$500K</strong> and 5 decisions.</p>
+        <p>You are the new technology advisor for Northstar Services. The data platform is unstable, executives do not trust the dashboards, and leadership wants an AI initiative in 6 months. You have <strong>$900K</strong>, 3 rounds, and 12 decisions. Some choices will create consequences you will not see immediately.</p>
       </div>
 
-      <div id="gameApp" class="game-app">
-        <div class="game-dashboard">
-          <div class="game-stat"><span>Reliability</span><strong id="reliabilityScore">42</strong></div>
-          <div class="game-stat"><span>Governance</span><strong id="governanceScore">35</strong></div>
-          <div class="game-stat"><span>Business value</span><strong id="valueScore">48</strong></div>
-          <div class="game-stat"><span>Budget</span><strong id="budgetScore">$500K</strong></div>
-        </div>
-
-        <div class="game-progress">
-          <span id="progressText">Decision 1 of 5</span>
-          <div class="game-progress-track"><span id="progressBar" style="width:20%"></span></div>
-        </div>
-
-        <section id="scenarioCard" class="scenario-card">
-          <div class="scenario-kicker" id="scenarioKicker"></div>
-          <h2 id="scenarioTitle"></h2>
-          <p id="scenarioText"></p>
-          <div id="choices" class="choice-grid"></div>
-        </section>
-
-        <section id="resultCard" class="result-card" hidden>
-          <span class="eyebrow">Simulation result</span>
-          <div class="result-score" id="finalScore"></div>
-          <h2 id="resultTitle"></h2>
-          <p id="resultText"></p>
-          <div class="result-breakdown">
-            <div><span>Reliability</span><strong id="finalReliability"></strong></div>
-            <div><span>Governance</span><strong id="finalGovernance"></strong></div>
-            <div><span>Business value</span><strong id="finalValue"></strong></div>
-            <div><span>Budget remaining</span><strong id="finalBudget"></strong></div>
-          </div>
-          <div class="result-actions">
-            <button class="button button-secondary" id="restartGame" type="button">Play again</button>
-            <a class="button button-primary" href="../services.html">Explore our services</a>
-          </div>
-        </section>
+      <div class="sil-game-dashboard sil-game-dashboard-six">
+        <div><span>Reliability</span><strong id="reliabilityScore">42</strong></div>
+        <div><span>Governance</span><strong id="governanceScore">35</strong></div>
+        <div><span>Business value</span><strong id="valueScore">48</strong></div>
+        <div><span>Architecture</span><strong id="architectureScore">38</strong></div>
+        <div><span>Confidence</span><strong id="confidenceScore">44</strong></div>
+        <div><span>Budget</span><strong id="budgetScore">$900K</strong></div>
       </div>
+
+      <div class="sil-progress">
+        <span id="progressText">Round 1 · Decision 1 of 12</span>
+        <div><span id="progressBar" style="width:20%"></span></div>
+      </div>
+
+      <div id="eventCard" class="sil-event-card" hidden></div>
+      <section id="scenarioCard" class="sil-scenario-card">
+        <div class="sil-scenario-kicker" id="scenarioKicker"></div>
+        <h2 id="scenarioTitle"></h2>
+        <p id="scenarioText"></p>
+        <div id="choices" class="sil-choice-grid"></div>
+      </section>
+
+      <section id="resultCard" class="sil-result-card" hidden>
+        <span class="eyebrow">Simulation result</span>
+        <div class="sil-result-score" id="finalScore"></div>
+        <h2 id="resultTitle"></h2>
+        <p id="resultText"></p>
+        <div class="sil-result-breakdown sil-result-breakdown-six">
+          <div><span>Reliability</span><strong id="finalReliability"></strong></div>
+          <div><span>Governance</span><strong id="finalGovernance"></strong></div>
+          <div><span>Business value</span><strong id="finalValue"></strong></div>
+          <div><span>Architecture</span><strong id="finalArchitecture"></strong></div>
+          <div><span>Confidence</span><strong id="finalConfidence"></strong></div>
+          <div><span>Budget remaining</span><strong id="finalBudget"></strong></div>
+        </div>
+        <div id="achievementArea" class="sil-achievements"></div>
+        <details class="sil-history">
+          <summary>Review your 12 decisions</summary>
+          <ol id="decisionHistory"></ol>
+        </details>
+        <div class="sil-result-actions">
+          <button class="button button-secondary" id="restartGame" type="button">Play again</button>
+          <a class="button button-primary" href="../services.html">Explore our services</a>
+        </div>
+      </section>
     </div>
   </section>
 </main>
