@@ -1,30 +1,160 @@
-(()=>{'use strict';
-const host=document.getElementById('scenarioCard'); if(!host)return;
-const URL='https://stevox.ca/games/data-platform-rescue/', KEY='stevox-empire-v1';
-const assets=[
-['pipeline','Data pipeline','Collect more orders automatically.',180,3,20],
-['warehouse','Data warehouse','Store and process growing volumes.',240,4,25],
-['analytics','Analytics studio','Convert demand into more sales.',210,3,20],
-['governance','Trust centre','Prevent bad data and privacy losses.',200,2,15],
-['automation','AI workshop','Increase fulfillment efficiency.',320,5,30],
-['scale','Cloud hub','Expand capacity without losing orders.',350,5,35]];
-const events=[['Market surge',8,0,0,'A new customer segment is ordering.'],['Supplier delay',0,0,4,'Some orders require extra processing.'],['Privacy review',0,1,0,'Customers want evidence of safe handling.'],['Quiet market',-5,0,0,'Demand has temporarily cooled.'],['Referral wave',5,0,0,'Happy customers bring new business.'],['Normal trading',0,0,0,'Operations are running normally.']];
-const money=n=>'$'+Math.round(n).toLocaleString('en-US');
-function fresh(daily=false){let seed=daily?Number(new Date().toISOString().slice(0,10).replaceAll('-','')):Math.floor(Math.random()*2147483646)+1;return {day:1,cash:550,earned:0,served:0,lost:0,trust:85,levels:[0,0,0,0,0,0],seed,daily,log:[],last:null,done:false,started:Date.now()};}
-function rng(s){s.seed=(Math.imul(s.seed,1664525)+1013904223)>>>0;return s.seed/4294967296;}
-function event(s){let copy={seed:s.seed};return events[Math.floor(rng(copy)*events.length)];}
-function cost(s,i){return Math.round(assets[i][3]*(1+s.levels[i]*.65));}
-function available(s,i){return s.levels[i]<3 && (i!==4||s.levels[1]>0&&s.levels[3]>0) && (i!==5||s.levels[0]>0&&s.levels[1]>0);}
-function forecast(s){const [p,w,a,g,ai,c]=s.levels,e=event(s);let demand=Math.max(1,12+s.day*3+a*5+e[1]);let intake=18+p*14+c*8;let capacity=20+w*16+ai*10+c*14-e[3];let accepted=Math.min(demand,intake,capacity);let errors=Math.min(accepted,Math.max(0,Math.ceil(accepted*(.13-g*.045-ai*.015))));let served=accepted-errors;let lost=demand-served;let fine=e[2]&&g===0?70:0;let income=served*(12+a*2);let upkeep=45+s.levels.reduce((sum,v,i)=>sum+v*assets[i][5],0);let net=income-upkeep-fine;return {demand,intake,capacity,accepted,errors,served,lost,fine,income,upkeep,net,e};}
-function tick(s){if(s.done)return;const f=forecast(s);rng(s);s.cash+=f.net;s.earned+=f.income;s.served+=f.served;s.lost+=f.lost;s.trust=Math.max(0,Math.min(100,s.trust+(f.lost/f.demand<=.12?4:f.lost/f.demand>.35?-7:-2)-(f.fine?8:0)));s.last=f;s.log.unshift({day:s.day,...f});s.day++;if(s.day>12||s.cash<0)s.done=true;}
-let s=fresh();try{let saved=JSON.parse(localStorage.getItem(KEY));if(saved&&saved.levels?.length===6&&saved.day>=1&&saved.day<=13)s=saved;}catch{}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(s));}catch{}}
-const style=document.createElement('style');style.textContent=`#emp{--ink:#142e46;--blue:#16668a;--line:#d9e4eb;--green:#16765b;color:var(--ink);font-family:inherit;max-width:1100px;margin:auto}#emp *{box-sizing:border-box}#emp h2,#emp h3,#emp p{margin:0}#emp button,#emp textarea{font:inherit}#emp button{cursor:pointer;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);padding:10px 14px;font-weight:650}#emp button:hover:not(:disabled){border-color:var(--blue);background:#eaf5fa}#emp button:focus-visible{outline:3px solid #29a8d0;outline-offset:2px}#emp button:disabled{opacity:.48;cursor:not-allowed}#emp .primary{background:#145a7d;color:white;border-color:#145a7d}#emp .primary:hover{background:#104664}#emp .bar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;justify-content:space-between}#emp .panel{border:1px solid var(--line);background:white;border-radius:14px;padding:18px;margin:12px 0}#emp .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}#emp .metric{border:1px solid var(--line);border-radius:10px;background:#f4f8fb;padding:13px}#emp .metric b{display:block;font-size:clamp(18px,3vw,28px);line-height:1.3}#emp small{color:#526b7e}#emp .layout{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}#emp .campus{background:#e9f1f0;border-radius:12px;overflow:hidden}#emp svg{display:block;width:100%;height:auto}#emp .asset{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:10px 0}#emp .asset:last-child{border:0}#emp .asset b{display:block}#emp .asset button{white-space:nowrap}#emp .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}#emp .flow div{background:#eff5f8;border-radius:8px;padding:9px;text-align:center}#emp .flow b{display:block;font-size:22px}#emp .track{height:7px;background:#e4edf2;border-radius:8px;overflow:hidden;margin:10px 0}#emp .track span{display:block;height:100%;background:#199b91}#emp .notice{background:#fff4dd;border-radius:9px;padding:12px;margin:10px 0}#emp .good{color:#16765b}#emp .bad{color:#b64632}#emp textarea{width:100%;min-height:155px;border:1px solid var(--line);padding:12px;border-radius:9px;color:var(--ink)}#emp .packet{animation:empflow 2s linear infinite}@keyframes empflow{from{stroke-dashoffset:30}to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){#emp .packet{animation:none}}@media(max-width:720px){#emp .layout{grid-template-columns:1fr}#emp .metrics{grid-template-columns:repeat(2,1fr)}#emp .panel{padding:12px}#emp .flow{grid-template-columns:repeat(2,1fr)}}`;document.head.append(style);
-function campus(){let names=['Business','Pipeline','Warehouse','Analytics','Trust','AI','Cloud'];let colors=['#317a9a','#278ba4','#4c7199','#1d9b85','#ca9b42','#8067a8','#527f9d'];let positions=[[190,15],[65,92],[315,92],[12,186],[137,186],[262,186],[387,186]];let lines='M250 80 L125 112 M250 80 L375 112 M125 155 L72 208 M125 155 L197 208 M375 155 L322 208 M375 155 L447 208';return `<svg viewBox="0 0 510 310" role="img" aria-label="Business campus showing built and unbuilt facilities"><defs><pattern id="empgrid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" stroke="#b9d2ce" fill="none"/></pattern></defs><rect width="510" height="310" fill="#e8f2ef"/><rect width="510" height="310" fill="url(#empgrid)"/><path d="${lines}" fill="none" stroke="#b0c7c8" stroke-width="7" stroke-linecap="round"/><path class="packet" d="${lines}" fill="none" stroke="#3699a7" stroke-width="3" stroke-dasharray="5 10"/>${positions.map(([x,y],i)=>{let l=i===0?1:s.levels[i-1],h=24+l*9;return `<g transform="translate(${x},${y})" opacity="${l?1:.3}"><ellipse cx="60" cy="77" rx="53" ry="16" fill="#a4bbb8"/><path d="M12 36 L60 15 L108 36 L60 57Z" fill="${colors[i]}"/><path d="M12 36 L60 57 V${57+h} L12 ${36+h}Z" fill="${colors[i]}"/><path d="M60 57 L108 36 V${36+h} L60 ${57+h}Z" fill="${colors[i]}" stroke="#173e54" stroke-opacity=".25"/><path d="M12 36 L60 15 L108 36 L60 57Z" fill="white" opacity=".28"/>${[0,1,2].map(j=>`<path d="M${22+j*12} ${48+j*5} l7 3 v9 l-7 -3Z" fill="#e8f7fa"/>`).join('')}<text x="60" y="${80+h*.25}" text-anchor="middle" font-size="11" font-weight="700" fill="#17354a">${names[i]} ${i&&l?'L'+l:''}</text></g>`}).join('')}</svg>`;}
-function metric(name,val,sub=''){return `<div class="metric"><small>${name}</small><b>${val}</b><small>${sub}</small></div>`;}
-function render(){save();let f=forecast(s);let rate=s.served+s.lost?Math.round(100*s.served/(s.served+s.lost)):0;let tier=s.levels.reduce((a,b)=>a+b,0);let stage=tier>=10?'Intelligent enterprise':tier>=7?'Enterprise':tier>=4?'Growing business':tier>=2?'Small business':'Startup';host.innerHTML=`<div id="emp"><div class="bar"><div><small>STEVOX LAB / ${s.daily?'DAILY CHALLENGE':'PRACTICE RUN'}</small><h2>${stage}</h2></div><div><button data-act="daily">Daily challenge</button> <button data-act="reset">New game</button></div></div><div class="track"><span style="width:${Math.min(100,(s.day-1)/12*100)}%"></span></div><div class="metrics">${metric('Cash',money(s.cash),'Available to invest')}${metric('Trading day',`${Math.min(s.day,12)}/12`)}${metric('Customers served',s.served,`${rate}% of total demand`)}${metric('Customer trust',s.trust+'%')}</div>${s.done?finish(rate):`<div class="layout"><div><div class="panel"><div class="bar"><h3>Your business campus</h3><small>${tier} upgrades</small></div><div class="campus">${campus()}</div><div class="notice"><b>${f.e[0]}</b><p>${f.e[4]}</p></div><h3>Today's order flow</h3><div class="flow"><div><small>Demand</small><b>${f.demand}</b></div><div><small>Collected</small><b>${Math.min(f.demand,f.intake)}</b></div><div><small>Processed</small><b>${f.accepted}</b></div><div><small>Successful</small><b>${f.served}</b></div></div><p><small>Forecast: ${f.lost} unserved orders · ${f.errors} data errors${f.fine?' · $70 privacy penalty':''}.</small></p><div class="bar" style="margin-top:12px"><div><small>Expected net cash after costs</small><h2 class="${f.net>=0?'good':'bad'}">${money(f.net)}</h2></div><button class="primary" data-act="day">Run day ${s.day} →</button></div></div>${s.last?`<div class="panel"><h3>Yesterday's results</h3><p>${s.last.served} orders delivered, ${s.last.lost} lost. ${money(s.last.income)} sales, ${money(s.last.upkeep+s.last.fine)} expenses.</p></div>`:''}</div><div class="panel"><h3>Build and upgrade</h3><p><small>Invest before running the day. Each upgrade changes the forecast immediately.</small></p>${assets.map((a,i)=>`<div class="asset"><div><b>${a[1]} <small>Lv ${s.levels[i]}/3</small></b><small>${a[2]} ${i===4&&!available(s,i)&&s.levels[i]<3?'Requires warehouse and trust centre.':i===5&&!available(s,i)&&s.levels[i]<3?'Requires pipeline and warehouse.':''}</small></div><button data-buy="${i}" ${!available(s,i)||s.cash<cost(s,i)?'disabled':''}>${s.levels[i]===3?'Max':!available(s,i)?'Locked':money(cost(s,i))}</button></div>`).join('')}<p><small>Every facility has operating costs. Build only what your business needs.</small></p></div></div><div class="panel"><b>Your mission.</b> Run 12 trading days. Serve at least 85% of demand, finish with $2,000 cash and maintain 75% customer trust. Balance growth, capacity and data quality.</div>`}</div>`;}
-function finish(rate){let goals=[s.cash>=2000,rate>=85,s.trust>=75];let won=goals.every(Boolean)&&s.day>12;let text=`Could you build a data-powered business in 12 trading days?\n\nI played STEVOX Data Empire and finished with ${money(s.cash)} cash, ${s.served} orders served (${rate}% of demand), and ${s.trust}% customer trust. I achieved ${goals.filter(Boolean).length}/3 business targets.\n\nCan you beat my result? Play free, no coding required:\n${URL}\n\n#DataEngineering #BusinessStrategy #DataAnalytics`;return `<div class="panel"><small>FINAL BUSINESS REPORT</small><h2>${won?'Enterprise mission accomplished':s.cash<0?'Business ran out of cash':'Trading season complete'}</h2><div class="campus">${campus()}</div><div class="metrics">${metric('Total sales',money(s.earned))}${metric('Cash',money(s.cash))}${metric('Demand served',rate+'%')}${metric('Goals achieved',goals.filter(Boolean).length+'/3')}</div><p>${goals[0]?'✓':'○'} Cash ≥ $2,000 · ${goals[1]?'✓':'○'} Demand served ≥ 85% · ${goals[2]?'✓':'○'} Trust ≥ 75%</p><p style="margin-top:12px">${s.lost} orders were not fulfilled. Data collection, processing capacity and trustworthy records all affect business outcomes. A bigger technology estate is not necessarily a more profitable one.</p><div class="bar" style="margin-top:15px"><button class="primary" data-act="reset">Play again</button><a href="/services/">Explore STEVOX services</a></div></div><div class="panel"><h3>Challenge your LinkedIn network</h3><p>Copy your result, then paste it into LinkedIn's post composer. LinkedIn does not automatically insert custom text.</p><textarea id="empPost" aria-label="Editable LinkedIn post">${text}</textarea><div class="bar"><button class="primary" data-act="copy">Copy post</button><button data-act="linkedin">Open LinkedIn</button><button data-act="image">Save result card</button></div><p id="empStatus" role="status"></p></div>`;}
-function image(){let c=document.createElement('canvas');c.width=1200;c.height=627;let x=c.getContext('2d');x.fillStyle='#102e49';x.fillRect(0,0,1200,627);x.fillStyle='#64d2de';x.font='bold 28px sans-serif';x.fillText('STEVOX LAB / DATA EMPIRE',55,65);x.fillStyle='white';x.font='bold 62px sans-serif';x.fillText('Can you beat my business?',55,155);let rate=Math.round(100*s.served/Math.max(1,s.served+s.lost));[[money(s.cash),'Cash remaining'],[rate+'%','Demand served'],[s.trust+'%','Customer trust']].forEach(([v,l],i)=>{let a=55+365*i;x.fillStyle='#204965';x.fillRect(a,210,340,170);x.fillStyle='white';x.font='bold 52px sans-serif';x.fillText(v,a+20,285);x.font='26px sans-serif';x.fillText(l,a+20,340)});x.font='30px sans-serif';x.fillText('12 trading days. Build smart. Grow responsibly.',55,460);x.fillStyle='#64d2de';x.fillText('stevox.ca/games/data-platform-rescue/',55,550);let a=document.createElement('a');a.download='stevox-data-empire-result.png';a.href=c.toDataURL();a.click();}
-host.addEventListener('click',async e=>{let b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.buy!==undefined&&!s.done){let i=Number(b.dataset.buy),v=cost(s,i);if(available(s,i)&&s.cash>=v){s.cash-=v;s.levels[i]++;render();}return;}switch(b.dataset.act){case 'day':tick(s);render();break;case 'reset':case 'daily':if(!s.done&&s.day>1&&!confirm('Start a new game? Current progress will be replaced.'))return;s=fresh(b.dataset.act==='daily');render();break;case 'copy':{let t=document.getElementById('empPost');try{await navigator.clipboard.writeText(t.value);document.getElementById('empStatus').textContent='Copied. Paste into LinkedIn.';}catch{t.focus();t.select();document.getElementById('empStatus').textContent='Press Ctrl+C or use your device copy command.';}break;}case 'linkedin':window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(URL),'_blank','noopener,noreferrer');break;case 'image':image();break;}});
-render();
-})();
+
+const scenarios = [
+  {round:1,kicker:"01 / Stabilize",title:"Monday, 7:12 AM. The executive dashboard missed its refresh again.",text:"The CEO presents quarterly results at 9:00 AM. The team can patch the dashboard manually, but the failures are becoming routine.",choices:[
+    {label:"Fund observability, automated tests, and failure alerting",cost:90,r:18,g:4,v:6,a:10,c:8,tag:"observability"},
+    {label:"Create a rotating manual recovery team",cost:45,r:4,g:0,v:8,a:-4,c:2,debt:"manualOps"},
+    {label:"Replace the BI tool immediately",cost:150,r:1,g:0,v:5,a:-3,c:-2,debt:"toolFirst"}]},
+  {round:1,kicker:"02 / Trust",title:"Finance and Operations publish different revenue numbers.",text:"Both teams can defend their calculations. Leadership wants a single number before the next board meeting.",choices:[
+    {label:"Create a governed revenue definition with accountable ownership",cost:85,r:4,g:20,v:14,a:5,c:16,tag:"semanticGovernance"},
+    {label:"Select Finance as the official source and move on",cost:15,r:0,g:2,v:5,a:0,c:2,debt:"metricConflict"},
+    {label:"Build a reconciliation dashboard showing both versions",cost:55,r:2,g:5,v:7,a:2,c:4,debt:"metricConflict"}]},
+  {round:1,kicker:"03 / Protect",title:"A routine review finds sensitive customer data accessible to 63 users.",text:"No incident has been reported. Several teams say broad access makes analysis faster.",choices:[
+    {label:"Introduce least privilege, masking, and recurring access reviews",cost:105,r:3,g:24,v:5,a:6,c:12,tag:"security"},
+    {label:"Document the risk and schedule remediation next quarter",cost:10,r:0,g:-10,v:2,a:0,c:-4,debt:"accessRisk"},
+    {label:"Remove warehouse access from everyone except administrators",cost:25,r:-5,g:12,v:-15,a:-2,c:-8}]},
+  {round:1,kicker:"04 / Pressure",title:"Sales wants 3 new dashboards before quarter end.",text:"The platform team is already carrying reliability work. Refusing the request may damage stakeholder confidence.",choices:[
+    {label:"Negotiate 1 high value dashboard and protect stabilization capacity",cost:45,r:8,g:3,v:12,a:5,c:7,tag:"sequencing"},
+    {label:"Commit to all 3 and postpone platform work",cost:80,r:-8,g:-2,v:16,a:-8,c:6,debt:"deliveryDebt"},
+    {label:"Refuse all new work until the platform is stable",cost:20,r:10,g:2,v:-12,a:4,c:-10}]},
+
+  {round:2,kicker:"05 / Modernize",title:"The legacy ETL layer now delays almost every change.",text:"A complete rewrite is attractive, but it would consume a large share of the remaining budget.",choices:[
+    {label:"Modernize incrementally around high value domains",cost:145,r:14,g:6,v:16,a:20,c:10,tag:"incremental"},
+    {label:"Approve a complete platform rewrite",cost:290,r:8,g:4,v:10,a:18,c:3,debt:"bigBang"},
+    {label:"Extend the legacy platform for another year",cost:30,r:-7,g:0,v:1,a:-14,c:-5,debt:"legacy"}]},
+  {round:2,kicker:"06 / Model",title:"Teams are rebuilding the same customer entities differently.",text:"The duplicated logic is creating inconsistent joins, definitions, and downstream behaviour.",choices:[
+    {label:"Establish reusable domain models and shared data contracts",cost:110,r:9,g:13,v:13,a:18,c:9,tag:"contracts"},
+    {label:"Let each product team optimize independently",cost:25,r:-3,g:-8,v:8,a:-10,c:-2,debt:"duplication"},
+    {label:"Centralize every transformation in 1 enterprise model",cost:120,r:4,g:10,v:-4,a:4,c:-3}]},
+  {round:2,kicker:"07 / Cost",title:"Cloud spend rises 38% in 2 months.",text:"Executives are questioning whether modernization is simply replacing technical debt with a larger invoice.",choices:[
+    {label:"Add workload attribution, cost observability, and optimization targets",cost:70,r:5,g:5,v:14,a:10,c:12,tag:"finops"},
+    {label:"Freeze all new cloud workloads",cost:10,r:1,g:2,v:-14,a:-5,c:-7},
+    {label:"Accept the increase as the cost of modernization",cost:0,r:0,g:-2,v:-7,a:-3,c:-8,debt:"costBlind"}]},
+  {round:2,kicker:"08 / Incident",title:"A critical dataset changes upstream without notice.",text:"A field used by 11 downstream products changes meaning but not type. Nothing technically breaks at ingestion.",choices:[
+    {label:"Pause affected outputs, validate impact, and formalize producer contracts",cost:75,r:15,g:13,v:3,a:14,c:12,tag:"contracts"},
+    {label:"Patch downstream logic and keep delivery moving",cost:35,r:3,g:0,v:8,a:-5,c:1,debt:"silentSemantics"},
+    {label:"Ask consumers to interpret the new field themselves",cost:0,r:-8,g:-10,v:-7,a:-8,c:-12,debt:"silentSemantics"}]},
+
+  {round:3,kicker:"09 / AI Ready",title:"Leadership wants an AI pilot in 6 months.",text:"The use case is promising, but lineage, quality ownership, and model input controls remain uneven.",choices:[
+    {label:"Run a focused readiness assessment and controlled pilot",cost:105,r:6,g:16,v:18,a:10,c:14,tag:"responsibleAI"},
+    {label:"Launch quickly with the data already available",cost:70,r:-7,g:-16,v:12,a:-4,c:3,debt:"aiRush"},
+    {label:"Ban AI until the entire data estate is perfect",cost:10,r:2,g:7,v:-18,a:0,c:-12}]},
+  {round:3,kicker:"10 / Consequence",title:"A model performs well overall but poorly for a smaller customer segment.",text:"The aggregate accuracy target is met. The product team argues that delaying launch would sacrifice value for an edge case.",choices:[
+    {label:"Investigate segment performance, data representation, and decision impact",cost:90,r:3,g:20,v:7,a:5,c:14,tag:"responsibleAI"},
+    {label:"Launch because the aggregate target is met",cost:20,r:0,g:-18,v:12,a:0,c:-10,debt:"fairnessRisk"},
+    {label:"Cancel the initiative entirely",cost:15,r:0,g:5,v:-16,a:0,c:-8}]},
+  {round:3,kicker:"11 / Executive Tradeoff",title:"The board asks for a 25% faster delivery cadence next year.",text:"The platform is healthier, but teams warn that accelerating without changing operating practices will recreate old problems.",choices:[
+    {label:"Tie faster delivery to platform standards, automation, and product ownership",cost:120,r:10,g:9,v:20,a:15,c:15,tag:"operatingModel"},
+    {label:"Set the target and let teams determine how to meet it",cost:20,r:-6,g:-5,v:8,a:-6,c:2,debt:"deliveryDebt"},
+    {label:"Reject the target as unrealistic",cost:0,r:4,g:1,v:-10,a:2,c:-9}]},
+  {round:3,kicker:"12 / Final Decision",title:"You have 1 final investment window before the strategy review.",text:"Where do you place the remaining attention to make the platform durable after you leave?",choices:[
+    {label:"Institutionalize ownership, controls, observability, and architecture decision records",cost:Math.min(100,9999),r:10,g:14,v:8,a:14,c:12,tag:"durability"},
+    {label:"Use the remaining capacity to deliver visible executive features",cost:80,r:-2,g:-3,v:16,a:-4,c:7},
+    {label:"Preserve the remaining budget and make no further change",cost:0,r:0,g:0,v:0,a:0,c:0}]}
+];
+
+let state;
+const q=id=>document.getElementById(id);
+const clamp=n=>Math.max(0,Math.min(100,n));
+
+function init(){
+  state={i:0,r:42,g:35,v:48,a:38,c:44,b:900,history:[],tags:new Set(),debts:new Set(),events:[]};
+  q("scenarioCard").hidden=false;q("resultCard").hidden=true;q("eventCard").hidden=true;
+  render();
+}
+
+function applyDelayedConsequences(){
+  const i=state.i;
+  let messages=[];
+  if(i===4){
+    if(state.debts.has("manualOps")){state.r=clamp(state.r-8);state.c=clamp(state.c-5);messages.push("The manual recovery process becomes a dependency. A missed handoff causes another executive reporting failure.");}
+    if(state.debts.has("metricConflict")){state.g=clamp(state.g-7);state.c=clamp(state.c-8);messages.push("The unresolved revenue definition resurfaces during planning. Teams are still arguing from different versions of the truth.");}
+    if(state.debts.has("accessRisk")){state.g=clamp(state.g-10);state.c=clamp(state.c-6);messages.push("An internal audit escalates the unresolved access issue. Remediation is now urgent rather than planned.");}
+    if(state.debts.has("deliveryDebt")){state.r=clamp(state.r-7);state.a=clamp(state.a-6);messages.push("Deferred platform work catches up with the team. Delivery slows as fragile components require repeated intervention.");}
+  }
+  if(i===8){
+    if(state.debts.has("bigBang")){state.b=Math.max(0,state.b-70);state.c=clamp(state.c-6);messages.push("The big bang rewrite overruns its migration estimate. $70K of contingency is consumed.");}
+    if(state.debts.has("legacy")){state.r=clamp(state.r-8);state.a=clamp(state.a-10);messages.push("A legacy dependency fails during a release and exposes how much modernization was deferred.");}
+    if(state.debts.has("duplication")){state.g=clamp(state.g-8);state.a=clamp(state.a-7);messages.push("Independent domain logic creates another metric conflict. The organization now has multiple versions of the same customer concept.");}
+    if(state.debts.has("costBlind")){state.b=Math.max(0,state.b-60);messages.push("Unattributed cloud growth consumes another $60K before the source of the spend is isolated.");}
+    if(state.debts.has("silentSemantics")){state.r=clamp(state.r-8);state.c=clamp(state.c-8);messages.push("A silent semantic change reaches an executive report. The pipeline was green, but the meaning was wrong.");}
+  }
+  if(i===11){
+    if(state.debts.has("aiRush")){state.g=clamp(state.g-12);state.c=clamp(state.c-10);messages.push("The rushed AI pilot reaches governance review with incomplete evidence about inputs and controls.");}
+    if(state.debts.has("fairnessRisk")){state.g=clamp(state.g-14);state.c=clamp(state.c-12);messages.push("The segment performance issue becomes visible to senior leadership after launch. Aggregate accuracy no longer looks sufficient.");}
+  }
+  if(messages.length){
+    state.events.push(...messages);
+    q("eventCard").innerHTML=`<strong>Consequence</strong><p>${messages.join(" ")}</p>`;
+    q("eventCard").hidden=false;
+  }else{
+    q("eventCard").hidden=true;
+  }
+}
+
+function render(){
+  applyDelayedConsequences();
+  q("reliabilityScore").textContent=state.r;
+  q("governanceScore").textContent=state.g;
+  q("valueScore").textContent=state.v;
+  q("architectureScore").textContent=state.a;
+  q("confidenceScore").textContent=state.c;
+  q("budgetScore").textContent=`$${state.b}K`;
+
+  const s=scenarios[state.i];
+  q("progressText").textContent=`Round ${s.round} · Decision ${state.i+1} of ${scenarios.length}`;
+  q("progressBar").style.width=`${((state.i+1)/scenarios.length)*100}%`;
+  q("scenarioKicker").textContent=s.kicker;
+  q("scenarioTitle").textContent=s.title;
+  q("scenarioText").textContent=s.text;
+  q("choices").innerHTML="";
+
+  s.choices.forEach(c=>{
+    const btn=document.createElement("button");
+    btn.className="sil-choice-card";btn.type="button";
+    btn.disabled=c.cost>state.b;
+    btn.innerHTML=`<span>${c.label}</span><strong>$${c.cost}K</strong><small>${c.cost>state.b?"Over budget":"Choose"}</small>`;
+    btn.onclick=()=>choose(c);
+    q("choices").appendChild(btn);
+  });
+}
+
+function choose(c){
+  state.history.push({decision:state.i+1,title:scenarios[state.i].title,choice:c.label});
+  state.b-=c.cost;
+  state.r=clamp(state.r+c.r);state.g=clamp(state.g+c.g);state.v=clamp(state.v+c.v);
+  state.a=clamp(state.a+c.a);state.c=clamp(state.c+c.c);
+  if(c.tag)state.tags.add(c.tag);if(c.debt)state.debts.add(c.debt);
+  state.i++;
+  state.i>=scenarios.length?finish():render();
+}
+
+function finish(){
+  q("scenarioCard").hidden=true;q("eventCard").hidden=true;q("resultCard").hidden=false;
+  const score=Math.round((state.r+state.g+state.v+state.a+state.c)/5);
+  q("finalScore").textContent=`${score}/100`;
+  let title,text;
+  if(score>=85){title="Enterprise Modernization Strategist";text="You treated the platform as an operating system for the organization, not a collection of tools. Reliability, governance, architecture, and stakeholder confidence reinforced one another.";}
+  else if(score>=72){title="Resilient Platform Leader";text="You materially strengthened the environment and made disciplined tradeoffs. A few weaknesses remain, but the platform can now absorb change without depending on constant intervention.";}
+  else if(score>=58){title="Pragmatic Modernizer";text="You created meaningful improvements, but several short term compromises remain embedded in the environment. The next phase needs stronger sequencing and ownership.";}
+  else if(score>=44){title="Delivery First Operator";text="You protected visible delivery in several moments, but accumulated platform risk reduced the durability of those gains.";}
+  else{title="Technical Debt Collector";text="Short term decisions repeatedly displaced structural fixes. The platform now needs a deliberate stabilization and governance program before additional complexity is added.";}
+
+  q("resultTitle").textContent=title;q("resultText").textContent=text;
+  q("finalReliability").textContent=state.r;q("finalGovernance").textContent=state.g;q("finalValue").textContent=state.v;
+  q("finalArchitecture").textContent=state.a;q("finalConfidence").textContent=state.c;q("finalBudget").textContent=`$${state.b}K`;
+
+  const achievements=[];
+  if(state.r>=80)achievements.push("Reliability Architect");
+  if(state.g>=80)achievements.push("Governance by Design");
+  if(state.a>=80)achievements.push("Architecture Steward");
+  if(state.c>=80)achievements.push("Trusted Advisor");
+  if(state.v>=85)achievements.push("Value Translator");
+  if(state.b>=200)achievements.push("Capital Disciplined");
+  if(state.tags.has("responsibleAI")&&state.g>=70)achievements.push("Responsible AI Builder");
+  q("achievementArea").innerHTML=achievements.length?`<h3>Achievements</h3><div>${achievements.map(a=>`<span>${a}</span>`).join("")}</div>`:"";
+
+  q("decisionHistory").innerHTML=state.history.map(h=>`<li><strong>${h.decision}. ${h.choice}</strong><span>${h.title}</span></li>`).join("");
+}
+
+q("restartGame").addEventListener("click",init);
+init();
