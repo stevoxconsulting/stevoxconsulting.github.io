@@ -1,160 +1,39 @@
-
-const scenarios = [
-  {round:1,kicker:"01 / Stabilize",title:"Monday, 7:12 AM. The executive dashboard missed its refresh again.",text:"The CEO presents quarterly results at 9:00 AM. The team can patch the dashboard manually, but the failures are becoming routine.",choices:[
-    {label:"Fund observability, automated tests, and failure alerting",cost:90,r:18,g:4,v:6,a:10,c:8,tag:"observability"},
-    {label:"Create a rotating manual recovery team",cost:45,r:4,g:0,v:8,a:-4,c:2,debt:"manualOps"},
-    {label:"Replace the BI tool immediately",cost:150,r:1,g:0,v:5,a:-3,c:-2,debt:"toolFirst"}]},
-  {round:1,kicker:"02 / Trust",title:"Finance and Operations publish different revenue numbers.",text:"Both teams can defend their calculations. Leadership wants a single number before the next board meeting.",choices:[
-    {label:"Create a governed revenue definition with accountable ownership",cost:85,r:4,g:20,v:14,a:5,c:16,tag:"semanticGovernance"},
-    {label:"Select Finance as the official source and move on",cost:15,r:0,g:2,v:5,a:0,c:2,debt:"metricConflict"},
-    {label:"Build a reconciliation dashboard showing both versions",cost:55,r:2,g:5,v:7,a:2,c:4,debt:"metricConflict"}]},
-  {round:1,kicker:"03 / Protect",title:"A routine review finds sensitive customer data accessible to 63 users.",text:"No incident has been reported. Several teams say broad access makes analysis faster.",choices:[
-    {label:"Introduce least privilege, masking, and recurring access reviews",cost:105,r:3,g:24,v:5,a:6,c:12,tag:"security"},
-    {label:"Document the risk and schedule remediation next quarter",cost:10,r:0,g:-10,v:2,a:0,c:-4,debt:"accessRisk"},
-    {label:"Remove warehouse access from everyone except administrators",cost:25,r:-5,g:12,v:-15,a:-2,c:-8}]},
-  {round:1,kicker:"04 / Pressure",title:"Sales wants 3 new dashboards before quarter end.",text:"The platform team is already carrying reliability work. Refusing the request may damage stakeholder confidence.",choices:[
-    {label:"Negotiate 1 high value dashboard and protect stabilization capacity",cost:45,r:8,g:3,v:12,a:5,c:7,tag:"sequencing"},
-    {label:"Commit to all 3 and postpone platform work",cost:80,r:-8,g:-2,v:16,a:-8,c:6,debt:"deliveryDebt"},
-    {label:"Refuse all new work until the platform is stable",cost:20,r:10,g:2,v:-12,a:4,c:-10}]},
-
-  {round:2,kicker:"05 / Modernize",title:"The legacy ETL layer now delays almost every change.",text:"A complete rewrite is attractive, but it would consume a large share of the remaining budget.",choices:[
-    {label:"Modernize incrementally around high value domains",cost:145,r:14,g:6,v:16,a:20,c:10,tag:"incremental"},
-    {label:"Approve a complete platform rewrite",cost:290,r:8,g:4,v:10,a:18,c:3,debt:"bigBang"},
-    {label:"Extend the legacy platform for another year",cost:30,r:-7,g:0,v:1,a:-14,c:-5,debt:"legacy"}]},
-  {round:2,kicker:"06 / Model",title:"Teams are rebuilding the same customer entities differently.",text:"The duplicated logic is creating inconsistent joins, definitions, and downstream behaviour.",choices:[
-    {label:"Establish reusable domain models and shared data contracts",cost:110,r:9,g:13,v:13,a:18,c:9,tag:"contracts"},
-    {label:"Let each product team optimize independently",cost:25,r:-3,g:-8,v:8,a:-10,c:-2,debt:"duplication"},
-    {label:"Centralize every transformation in 1 enterprise model",cost:120,r:4,g:10,v:-4,a:4,c:-3}]},
-  {round:2,kicker:"07 / Cost",title:"Cloud spend rises 38% in 2 months.",text:"Executives are questioning whether modernization is simply replacing technical debt with a larger invoice.",choices:[
-    {label:"Add workload attribution, cost observability, and optimization targets",cost:70,r:5,g:5,v:14,a:10,c:12,tag:"finops"},
-    {label:"Freeze all new cloud workloads",cost:10,r:1,g:2,v:-14,a:-5,c:-7},
-    {label:"Accept the increase as the cost of modernization",cost:0,r:0,g:-2,v:-7,a:-3,c:-8,debt:"costBlind"}]},
-  {round:2,kicker:"08 / Incident",title:"A critical dataset changes upstream without notice.",text:"A field used by 11 downstream products changes meaning but not type. Nothing technically breaks at ingestion.",choices:[
-    {label:"Pause affected outputs, validate impact, and formalize producer contracts",cost:75,r:15,g:13,v:3,a:14,c:12,tag:"contracts"},
-    {label:"Patch downstream logic and keep delivery moving",cost:35,r:3,g:0,v:8,a:-5,c:1,debt:"silentSemantics"},
-    {label:"Ask consumers to interpret the new field themselves",cost:0,r:-8,g:-10,v:-7,a:-8,c:-12,debt:"silentSemantics"}]},
-
-  {round:3,kicker:"09 / AI Ready",title:"Leadership wants an AI pilot in 6 months.",text:"The use case is promising, but lineage, quality ownership, and model input controls remain uneven.",choices:[
-    {label:"Run a focused readiness assessment and controlled pilot",cost:105,r:6,g:16,v:18,a:10,c:14,tag:"responsibleAI"},
-    {label:"Launch quickly with the data already available",cost:70,r:-7,g:-16,v:12,a:-4,c:3,debt:"aiRush"},
-    {label:"Ban AI until the entire data estate is perfect",cost:10,r:2,g:7,v:-18,a:0,c:-12}]},
-  {round:3,kicker:"10 / Consequence",title:"A model performs well overall but poorly for a smaller customer segment.",text:"The aggregate accuracy target is met. The product team argues that delaying launch would sacrifice value for an edge case.",choices:[
-    {label:"Investigate segment performance, data representation, and decision impact",cost:90,r:3,g:20,v:7,a:5,c:14,tag:"responsibleAI"},
-    {label:"Launch because the aggregate target is met",cost:20,r:0,g:-18,v:12,a:0,c:-10,debt:"fairnessRisk"},
-    {label:"Cancel the initiative entirely",cost:15,r:0,g:5,v:-16,a:0,c:-8}]},
-  {round:3,kicker:"11 / Executive Tradeoff",title:"The board asks for a 25% faster delivery cadence next year.",text:"The platform is healthier, but teams warn that accelerating without changing operating practices will recreate old problems.",choices:[
-    {label:"Tie faster delivery to platform standards, automation, and product ownership",cost:120,r:10,g:9,v:20,a:15,c:15,tag:"operatingModel"},
-    {label:"Set the target and let teams determine how to meet it",cost:20,r:-6,g:-5,v:8,a:-6,c:2,debt:"deliveryDebt"},
-    {label:"Reject the target as unrealistic",cost:0,r:4,g:1,v:-10,a:2,c:-9}]},
-  {round:3,kicker:"12 / Final Decision",title:"You have 1 final investment window before the strategy review.",text:"Where do you place the remaining attention to make the platform durable after you leave?",choices:[
-    {label:"Institutionalize ownership, controls, observability, and architecture decision records",cost:Math.min(100,9999),r:10,g:14,v:8,a:14,c:12,tag:"durability"},
-    {label:"Use the remaining capacity to deliver visible executive features",cost:80,r:-2,g:-3,v:16,a:-4,c:7},
-    {label:"Preserve the remaining budget and make no further change",cost:0,r:0,g:0,v:0,a:0,c:0}]}
+/* STEVOX Find the Fault. Replace the existing game script only. */
+(() => {
+'use strict';
+const URL='https://stevox.ca/games/data-platform-rescue/';
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD',maximumFractionDigits:0}).format(n);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cases=[
+ {name:'The missing revenue',fault:'status',brief:'Finance says revenue is higher than the sales dashboard. The ingestion job reports success.',reason:'A status filter excluded valid settled orders. Revenue policy includes both paid and settled orders, not pending or cancelled orders.',lesson:'A successful pipeline run does not establish that its business logic is correct.',checks:['Paid and settled orders included','Pending and cancelled orders excluded']},
+ {name:'The double count',fault:'dedup',brief:'The dashboard reports more revenue than Finance. The ingestion job retried after a network interruption.',reason:'A retry replayed existing order IDs. Deduplicating by order ID prevents the replay from counting revenue twice.',lesson:'Retryable ingestion needs idempotency at the business record grain.',checks:['Replayed order counted once','Distinct orders with equal amounts retained']},
+ {name:'The disappearing customers',fault:'join',brief:'Finance reports more revenue than the dashboard. A new customer segment started ordering this week.',reason:'An inner join dropped orders whose customer profile had not arrived. A left join retains the orders while exposing missing profiles.',lesson:'Enrichment should not silently remove valid financial facts.',checks:['Orders without profiles retained','Known customer orders retained']},
+ {name:'The stale dashboard',fault:'refresh',brief:'Finance has posted new transactions, but the dashboard still shows yesterday’s total.',reason:'The dashboard used a cached snapshot rather than the current transformed data. Refreshing the published dataset restores freshness.',lesson:'Check freshness at every boundary, not just the ingestion job.',checks:['Latest orders displayed','Cancelled orders remain excluded']}
 ];
-
-let state;
-const q=id=>document.getElementById(id);
-const clamp=n=>Math.max(0,Math.min(100,n));
-
-function init(){
-  state={i:0,r:42,g:35,v:48,a:38,c:44,b:900,history:[],tags:new Set(),debts:new Set(),events:[]};
-  q("scenarioCard").hidden=false;q("resultCard").hidden=true;q("eventCard").hidden=true;
-  render();
-}
-
-function applyDelayedConsequences(){
-  const i=state.i;
-  let messages=[];
-  if(i===4){
-    if(state.debts.has("manualOps")){state.r=clamp(state.r-8);state.c=clamp(state.c-5);messages.push("The manual recovery process becomes a dependency. A missed handoff causes another executive reporting failure.");}
-    if(state.debts.has("metricConflict")){state.g=clamp(state.g-7);state.c=clamp(state.c-8);messages.push("The unresolved revenue definition resurfaces during planning. Teams are still arguing from different versions of the truth.");}
-    if(state.debts.has("accessRisk")){state.g=clamp(state.g-10);state.c=clamp(state.c-6);messages.push("An internal audit escalates the unresolved access issue. Remediation is now urgent rather than planned.");}
-    if(state.debts.has("deliveryDebt")){state.r=clamp(state.r-7);state.a=clamp(state.a-6);messages.push("Deferred platform work catches up with the team. Delivery slows as fragile components require repeated intervention.");}
-  }
-  if(i===8){
-    if(state.debts.has("bigBang")){state.b=Math.max(0,state.b-70);state.c=clamp(state.c-6);messages.push("The big bang rewrite overruns its migration estimate. $70K of contingency is consumed.");}
-    if(state.debts.has("legacy")){state.r=clamp(state.r-8);state.a=clamp(state.a-10);messages.push("A legacy dependency fails during a release and exposes how much modernization was deferred.");}
-    if(state.debts.has("duplication")){state.g=clamp(state.g-8);state.a=clamp(state.a-7);messages.push("Independent domain logic creates another metric conflict. The organization now has multiple versions of the same customer concept.");}
-    if(state.debts.has("costBlind")){state.b=Math.max(0,state.b-60);messages.push("Unattributed cloud growth consumes another $60K before the source of the spend is isolated.");}
-    if(state.debts.has("silentSemantics")){state.r=clamp(state.r-8);state.c=clamp(state.c-8);messages.push("A silent semantic change reaches an executive report. The pipeline was green, but the meaning was wrong.");}
-  }
-  if(i===11){
-    if(state.debts.has("aiRush")){state.g=clamp(state.g-12);state.c=clamp(state.c-10);messages.push("The rushed AI pilot reaches governance review with incomplete evidence about inputs and controls.");}
-    if(state.debts.has("fairnessRisk")){state.g=clamp(state.g-14);state.c=clamp(state.c-12);messages.push("The segment performance issue becomes visible to senior leadership after launch. Aggregate accuracy no longer looks sufficient.");}
-  }
-  if(messages.length){
-    state.events.push(...messages);
-    q("eventCard").innerHTML=`<strong>Consequence</strong><p>${messages.join(" ")}</p>`;
-    q("eventCard").hidden=false;
-  }else{
-    q("eventCard").hidden=true;
-  }
-}
-
-function render(){
-  applyDelayedConsequences();
-  q("reliabilityScore").textContent=state.r;
-  q("governanceScore").textContent=state.g;
-  q("valueScore").textContent=state.v;
-  q("architectureScore").textContent=state.a;
-  q("confidenceScore").textContent=state.c;
-  q("budgetScore").textContent=`$${state.b}K`;
-
-  const s=scenarios[state.i];
-  q("progressText").textContent=`Round ${s.round} · Decision ${state.i+1} of ${scenarios.length}`;
-  q("progressBar").style.width=`${((state.i+1)/scenarios.length)*100}%`;
-  q("scenarioKicker").textContent=s.kicker;
-  q("scenarioTitle").textContent=s.title;
-  q("scenarioText").textContent=s.text;
-  q("choices").innerHTML="";
-
-  s.choices.forEach(c=>{
-    const btn=document.createElement("button");
-    btn.className="sil-choice-card";btn.type="button";
-    btn.disabled=c.cost>state.b;
-    btn.innerHTML=`<span>${c.label}</span><strong>$${c.cost}K</strong><small>${c.cost>state.b?"Over budget":"Choose"}</small>`;
-    btn.onclick=()=>choose(c);
-    q("choices").appendChild(btn);
-  });
-}
-
-function choose(c){
-  state.history.push({decision:state.i+1,title:scenarios[state.i].title,choice:c.label});
-  state.b-=c.cost;
-  state.r=clamp(state.r+c.r);state.g=clamp(state.g+c.g);state.v=clamp(state.v+c.v);
-  state.a=clamp(state.a+c.a);state.c=clamp(state.c+c.c);
-  if(c.tag)state.tags.add(c.tag);if(c.debt)state.debts.add(c.debt);
-  state.i++;
-  state.i>=scenarios.length?finish():render();
-}
-
-function finish(){
-  q("scenarioCard").hidden=true;q("eventCard").hidden=true;q("resultCard").hidden=false;
-  const score=Math.round((state.r+state.g+state.v+state.a+state.c)/5);
-  q("finalScore").textContent=`${score}/100`;
-  let title,text;
-  if(score>=85){title="Enterprise Modernization Strategist";text="You treated the platform as an operating system for the organization, not a collection of tools. Reliability, governance, architecture, and stakeholder confidence reinforced one another.";}
-  else if(score>=72){title="Resilient Platform Leader";text="You materially strengthened the environment and made disciplined tradeoffs. A few weaknesses remain, but the platform can now absorb change without depending on constant intervention.";}
-  else if(score>=58){title="Pragmatic Modernizer";text="You created meaningful improvements, but several short term compromises remain embedded in the environment. The next phase needs stronger sequencing and ownership.";}
-  else if(score>=44){title="Delivery First Operator";text="You protected visible delivery in several moments, but accumulated platform risk reduced the durability of those gains.";}
-  else{title="Technical Debt Collector";text="Short term decisions repeatedly displaced structural fixes. The platform now needs a deliberate stabilization and governance program before additional complexity is added.";}
-
-  q("resultTitle").textContent=title;q("resultText").textContent=text;
-  q("finalReliability").textContent=state.r;q("finalGovernance").textContent=state.g;q("finalValue").textContent=state.v;
-  q("finalArchitecture").textContent=state.a;q("finalConfidence").textContent=state.c;q("finalBudget").textContent=`$${state.b}K`;
-
-  const achievements=[];
-  if(state.r>=80)achievements.push("Reliability Architect");
-  if(state.g>=80)achievements.push("Governance by Design");
-  if(state.a>=80)achievements.push("Architecture Steward");
-  if(state.c>=80)achievements.push("Trusted Advisor");
-  if(state.v>=85)achievements.push("Value Translator");
-  if(state.b>=200)achievements.push("Capital Disciplined");
-  if(state.tags.has("responsibleAI")&&state.g>=70)achievements.push("Responsible AI Builder");
-  q("achievementArea").innerHTML=achievements.length?`<h3>Achievements</h3><div>${achievements.map(a=>`<span>${a}</span>`).join("")}</div>`:"";
-
-  q("decisionHistory").innerHTML=state.history.map(h=>`<li><strong>${h.decision}. ${h.choice}</strong><span>${h.title}</span></li>`).join("");
-}
-
-q("restartGame").addEventListener("click",init);
-init();
+const controls=[{id:'status',name:'Revenue filter',options:[['paid','Paid only'],['valid','Paid + settled'],['all','All statuses']]},{id:'dedup',name:'Retry handling',options:[['none','Keep every row'],['id','Unique order ID'],['amount','Unique amount']]},{id:'join',name:'Customer enrichment',options:[['inner','Inner join'],['left','Left join']]},{id:'refresh',name:'Dashboard source',options:[['cached','Previous snapshot'],['live','Current dataset']]}];
+const good={status:'valid',dedup:'id',join:'left',refresh:'live'};
+const bad={status:'paid',dedup:'none',join:'inner',refresh:'cached'};
+let host,S,clock; const stages=['Source','Ingestion','Transform','Dashboard'];
+function rng(seed){return ()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};}
+function records(rand){let rows=[];for(let i=0;i<12;i++){rows.push({id:'ORD-'+(101+i),amount: [180,320,450,650,900,1200][Math.floor(rand()*6)],status:i===10?'pending':i===11?'cancelled':i===2||i===7?'settled':'paid',customer:i===4||i===8?'NEW':'C'+(1+i%4),day:i>=7?'Today':'Yesterday'});} rows[1].amount=rows[0].amount;return rows;}
+function valid(r){return r.status==='paid'||r.status==='settled';}
+function calculate(rows,cfg,kind){const source=rows.filter(valid);const input=kind==='dedup'?[...rows,...rows.filter(r=>r.id==='ORD-101'||r.id==='ORD-103')]:rows.slice();let t=input.filter(r=>cfg.status==='all'||(cfg.status==='paid'?r.status==='paid':valid(r))); if(cfg.dedup!=='none'){const seen=new Set();t=t.filter(r=>{const k=cfg.dedup==='id'?r.id:r.amount;if(seen.has(k))return false;seen.add(k);return true;});}if(cfg.join==='inner')t=t.filter(r=>r.customer!=='NEW');const dash=cfg.refresh==='cached'?t.filter(r=>r.day==='Yesterday'):t.slice();return [source,input,t,dash];}
+const sum=rows=>rows.reduce((n,r)=>n+r.amount,0);
+const signature=rows=>rows.map(r=>r.id+':'+r.amount).sort().join('|');
+function passed(rows,cfg,kind){let a=calculate(rows,cfg,kind);return signature(a[0])===signature(a[3]);}
+function start(index,seed,daily=false){clearInterval(clock);const rand=rng(seed);const c=cases[index];S={index,seed,daily,c,rows:records(rand),cfg:{...good,[c.fault]:bad[c.fault]},draft:{...good,[c.fault]:bad[c.fault]},seen:new Set(),selected:null,runs:0,hints:0,start:Date.now(),done:false,notice:'',last:null};render();clock=setInterval(()=>{if($('svf-time'))$('svf-time').textContent=elapsed();},1000);}
+function elapsed(){const n=Math.floor((Date.now()-S.start)/1000);return Math.floor(n/60)+':'+String(n%60).padStart(2,'0');}
+function daily(){let date=new Date().toISOString().slice(0,10);let seed=Number(date.replaceAll('-',''));start(seed%cases.length,seed,true);}
+function next(){start((S.index+1)%cases.length,Math.floor(Math.random()*4294967296));}
+function table(rows){return `<div class="svf-scroll"><table><thead><tr><th>Order</th><th>Amount</th><th>Status</th><th>Customer</th><th>Posted</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.id}</td><td>${money(r.amount)}</td><td>${r.status}</td><td>${r.customer==='NEW'?'Profile missing':r.customer}</td><td>${r.day}</td></tr>`).join('')}</tbody></table></div>`;}
+function inspect(data){if(S.selected===null)return '<p class="svf-muted">Select a pipeline component to inspect its records and configuration.</p>';const i=S.selected,rows=data[i];return `<div class="svf-section-head"><h3>${stages[i]} inspection</h3><span>${rows.length} records</span></div>${i===0?'<p>Finance policy: count paid and settled orders only. Each order ID counts once.</p>':i===1?'<p>Raw ingestion records, including any replayed rows and non-revenue statuses.</p>':i===2?'<p>Current transformation settings: '+controls.slice(0,3).map(c=>esc(c.options.find(o=>o[0]===S.cfg[c.id])[1])).join(' · ')+'</p>':'<p>Published source: '+esc(controls[3].options.find(o=>o[0]===S.cfg.refresh)[1])+'.</p>'}${table(rows)}`;}
+function render(){const data=calculate(S.rows,S.cfg,S.c.fault),target=sum(data[0]),actual=sum(data[3]);host.innerHTML=`<div class="svf-top"><span>STEVOX LAB / FIND THE FAULT</span><div><button data-act="daily" class="svf-link">Daily challenge</button><button data-act="next" class="svf-link">New incident</button></div></div><div class="svf-heading"><div><span class="svf-kicker">${S.daily?'DAILY CHALLENGE':'PRACTICE INCIDENT'} · ${String(S.index+1).padStart(2,'0')}</span><h2>${S.c.name}</h2><p>${S.c.brief}</p></div><span class="svf-timer" id="svf-time">${elapsed()}</span></div><div class="svf-metrics"><div><small>Finance control total</small><strong>${money(target)}</strong></div><div><small>Published revenue</small><strong>${money(actual)}</strong></div><div><small>Difference</small><strong class="${actual===target?'svf-ok':'svf-error'}">${money(actual-target)}</strong></div></div><div class="svf-instruction"><b>Mission.</b> Trace the discrepancy, change the pipeline settings, then run the repair. Your result must also pass an unseen test dataset.</div><div class="svf-pipe" aria-label="Pipeline components">${stages.map((name,i)=>`<button data-node="${i}" aria-pressed="${S.selected===i}" class="svf-node ${S.selected===i?'svf-active':''}"><small>0${i+1} ${S.seen.has(i)?'· inspected':''}</small><b>${name}</b><span>${S.seen.has(i)?data[i].length+' records':'Inspect records'}</span></button>`).join('')}</div><section class="svf-panel" aria-label="Evidence">${inspect(data)}</section><section class="svf-panel"><div class="svf-section-head"><h3>Repair console</h3><button data-act="hint" class="svf-link">Reveal hint</button></div>${S.hints?'<p class="svf-hint">'+esc(S.c.reason)+'</p>':''}<div class="svf-settings">${controls.map(c=>`<label>${c.name}<select data-setting="${c.id}">${c.options.map(o=>`<option value="${o[0]}" ${S.draft[c.id]===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></label>`).join('')}</div><div class="svf-actions"><button class="svf-primary" data-act="run">Run repair</button><span>${S.runs} repair attempt${S.runs===1?'':'s'} · ${S.seen.size}/4 inspected</span></div><p role="status" class="svf-feedback">${esc(S.notice)}</p></section>`;}
+function run(){S.runs++;S.cfg={...S.draft};const live=passed(S.rows,S.cfg,S.c.fault);const test=passed(records(rng(S.seed^0xabcdef)),S.cfg,S.c.fault);const config=controls.every(c=>S.cfg[c.id]===good[c.id]);S.last={live,test,config};if(live&&test&&config){finish();return;}S.notice=!live?'The published records still do not reconcile. Inspect the pipeline again.':!test?'The current total matches, but the independent test failed. Check for a fix that generalizes.':'Totals match in both datasets, but a required pipeline control is still unsafe. Check the settings.';render();$('svf-root').querySelector('[data-act="run"]').focus();}
+function shareText(){return `I solved “${S.c.name}” in STEVOX Find the Fault. My result: ${S.runs} repair attempt${S.runs===1?'':'s'}, ${elapsed()} elapsed, revenue reconciled and independent validation passed. Can you find the fault? Try the free data investigation challenge: ${URL}`;}
+function finish(){S.done=true;clearInterval(clock);const data=calculate(S.rows,S.cfg,S.c.fault);const text=shareText();host.innerHTML=`<div class="svf-top"><span>STEVOX LAB / FIND THE FAULT</span><span>INCIDENT CLOSED</span></div><div class="svf-complete"><span class="svf-kicker">VALIDATED REPAIR</span><h2>Revenue reconciled.</h2><p>Finance and the dashboard now agree at ${money(sum(data[0]))}. The independent dataset passed too.</p></div><div class="svf-metrics"><div><small>Repair attempts</small><strong>${S.runs}</strong></div><div><small>Elapsed time</small><strong>${elapsed()}</strong></div><div><small>Hints used</small><strong>${S.hints}</strong></div></div><section class="svf-panel"><h3>What actually happened</h3><p>${S.c.reason}</p><p><b>Engineering principle.</b> ${S.c.lesson}</p><p class="svf-ok">✓ ${S.c.checks.join(' · ✓ ')}</p><p class="svf-ok">✓ Independent data validation · ✓ All required controls restored</p><p>STEVOX applies this approach to real data platforms: trace the evidence, isolate the cause, implement a targeted fix, and validate the outcome.</p></section><section class="svf-panel"><h3>Challenge your LinkedIn network</h3><p>Personalize your generated post, copy it, and open LinkedIn to share the challenge.</p><textarea id="svf-share" rows="5" aria-label="Editable LinkedIn post">${esc(text)}</textarea><div class="svf-actions"><button class="svf-primary" data-act="linkedin">Copy post & open LinkedIn</button><button data-act="copy">Copy text</button></div><p role="status" id="svf-share-status"></p></section><div class="svf-actions"><button class="svf-primary" data-act="next">Next incident</button><button data-act="daily">Daily challenge</button><a href="${URL.replace('games/data-platform-rescue/','services/')}">Explore STEVOX services</a></div>`;host.querySelector('h2').setAttribute('tabindex','-1');host.querySelector('h2').focus();}
+function copy(){const el=$('svf-share'),status=$('svf-share-status');const fallback=()=>{el.focus();el.select();let ok=false;try{ok=document.execCommand('copy');}catch{}status.textContent=ok?'Post copied. Paste it into your LinkedIn post.':'Select and copy the text manually, then paste it into LinkedIn.';};if(navigator.clipboard?.writeText){navigator.clipboard.writeText(el.value).then(()=>status.textContent='Post copied. Paste it into your LinkedIn post.').catch(fallback);}else fallback();}
+function mount(){const old=$('scenarioCard');if(!old)return;host=old;host.id='svf-root';host.hidden=false;const css=document.createElement('style');css.textContent=CSS;document.head.append(css);host.addEventListener('change',e=>{if(e.target.dataset.setting)S.draft[e.target.dataset.setting]=e.target.value;});host.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.node!==undefined){S.selected=Number(b.dataset.node);S.seen.add(S.selected);render();host.querySelector(`[data-node="${S.selected}"]`).focus();return;}switch(b.dataset.act){case 'run':run();break;case 'hint':S.hints=1;render();break;case 'next':next();break;case 'daily':daily();break;case 'copy':copy();break;case 'linkedin':copy();window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(URL),'_blank','noopener,noreferrer');break;}});start(0,Math.floor(Math.random()*4294967296));}
+const CSS=`#svf-root{--ink:#142d43;--blue:#145a83;--line:#d7e2eb;--muted:#526778;display:block!important;background:#f5f8fb!important;color:var(--ink)!important;padding:clamp(12px,3vw,30px)!important;border:1px solid var(--line);border-radius:16px;font:15px/1.55 system-ui,sans-serif;max-width:100%;box-sizing:border-box}#svf-root *{box-sizing:border-box}#svf-root h2,#svf-root h3,#svf-root p{color:inherit;margin:0 0 10px}#svf-root h2{font-size:clamp(25px,4vw,37px);line-height:1.15;letter-spacing:-.035em}#svf-root h3{font-size:17px;line-height:1.3}#svf-root button,#svf-root select,#svf-root textarea{font:inherit;color:var(--ink);background:white;border:1px solid var(--line);border-radius:8px;padding:10px 13px;text-transform:none;letter-spacing:normal;cursor:pointer}#svf-root button:hover{border-color:var(--blue);background:#eaf3f9}#svf-root :focus-visible{outline:3px solid #298ac2;outline-offset:3px}#svf-root .svf-primary{background:var(--blue);color:white;border-color:var(--blue);font-weight:650}#svf-root .svf-top,#svf-root .svf-heading,#svf-root .svf-section-head,#svf-root .svf-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}#svf-root .svf-top{font-size:11px;font-weight:750;letter-spacing:.08em;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:20px}#svf-root .svf-link{background:transparent;border:0;color:var(--blue);font-size:13px;padding:6px;text-decoration:underline}#svf-root .svf-kicker{font-size:11px;font-weight:750;letter-spacing:.12em;color:var(--blue);display:block;margin-bottom:8px}#svf-root .svf-timer{font-variant-numeric:tabular-nums;background:white;border:1px solid var(--line);border-radius:8px;padding:8px 14px}#svf-root .svf-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}#svf-root .svf-metrics>div{background:white;border:1px solid var(--line);border-radius:10px;padding:12px}#svf-root .svf-metrics small{display:block;color:var(--muted);font-size:12px}#svf-root .svf-metrics strong{display:block;font-size:clamp(18px,3vw,28px);font-variant-numeric:tabular-nums;line-height:1.3}#svf-root .svf-error{color:#a83931}#svf-root .svf-ok{color:#18734e}#svf-root .svf-instruction{padding:12px 0;color:var(--muted)}#svf-root .svf-pipe{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:10px 0 16px}#svf-root .svf-node{position:relative;text-align:left;padding:12px;min-width:0;display:grid;gap:4px}#svf-root .svf-node:not(:last-child):after{content:'›';position:absolute;right:-13px;top:35%;color:var(--muted);font-size:20px}#svf-root .svf-node small,#svf-root .svf-node span{font-size:11px;color:var(--muted)}#svf-root .svf-node b{font-size:15px}#svf-root .svf-active{border:2px solid var(--blue);background:#eaf3f9}#svf-root .svf-panel{background:white;border:1px solid var(--line);padding:16px;border-radius:12px;margin:12px 0}#svf-root .svf-scroll{overflow:auto;max-height:280px}#svf-root table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}#svf-root th,#svf-root td{padding:8px;text-align:left;border-bottom:1px solid var(--line);color:var(--ink)}#svf-root th{position:sticky;top:0;background:#eef4f8}#svf-root .svf-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}#svf-root label{display:grid;gap:5px;font-weight:600;font-size:13px}#svf-root select{width:100%;min-width:0;font-weight:400}#svf-root .svf-actions{justify-content:flex-start;margin-top:12px}#svf-root .svf-actions span,#svf-root .svf-muted{color:var(--muted);font-size:13px}#svf-root .svf-feedback{margin:12px 0 0;color:#a83931}#svf-root .svf-hint{background:#edf4fa;padding:10px;border-radius:8px}#svf-root textarea{width:100%;resize:vertical;cursor:text}#svf-root .svf-complete{padding:12px 0}#svf-root a{color:var(--blue);text-decoration:underline}@media(max-width:600px){#svf-root .svf-pipe{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#svf-root .svf-node:after{display:none}#svf-root .svf-settings{grid-template-columns:1fr}#svf-root .svf-metrics>div{padding:8px}#svf-root .svf-metrics small{font-size:10px}}`;
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
