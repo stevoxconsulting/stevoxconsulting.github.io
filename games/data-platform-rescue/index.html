@@ -1,473 +1,60 @@
-/*
- * STEVOX Lab: Data Platform Rescue, focused edition.
- * Drop-in replacement for the existing game JavaScript.
- * Preserves the site's header, footer, URL, and folder-based navigation.
- * Requires only #scenarioCard, #resultCard and #eventCard from the existing page.
- * No frameworks, APIs, cookies, tracking, or external assets.
- */
-(() => {
-  "use strict";
-
-  const byId = (id) => document.getElementById(id);
-  const TOTAL_MINUTES = 45;
-  const CASE_URL = "https://stevox.ca/games/data-platform-rescue/";
-  const STEPS = [
-    {
-      phase: "01 / Diagnose",
-      time: "Monday, 8:30 AM",
-      title: "The board dashboard is $1.1M higher than Finance.",
-      brief: "The CFO's briefing starts at 9:15 AM. The executive dashboard reports $14.2M in recognized revenue, but Finance has signed off on $13.1M. The pipeline shows green. What do you investigate first?",
-      evidence: [
-        ["Finance ledger", "$13.1M", "Approved close"],
-        ["Executive dashboard", "$14.2M", "Last refreshed 7:58 AM"],
-        ["Pipeline status", "Passed", "No runtime error"]
-      ],
-      choices: [
-        {
-          label: "Trace revenue through the source mapping and compare the last 2 releases.",
-          cost: "18 min", minutes: 18, points: 25, tag: "trace",
-          outcome: "You find that a 7:22 AM mapping change included pending transactions in recognized revenue. The $1.1M difference is real, but it is not earned revenue.",
-          lesson: "A successful pipeline only proves that processing ran. It does not prove that the business definition is correct."
-        },
-        {
-          label: "Confirm Finance's approved figure and compare the reporting definitions.",
-          cost: "22 min total", minutes: 22, points: 19, tag: "verify",
-          outcome: "Finance confirms $13.1M, but the definition comparison does not reveal where the change began. A data engineer spends another 10 minutes tracing the status mapping.",
-          lesson: "Confirming the authoritative measure is essential. Following its lineage is still necessary to find the cause."
-        },
-        {
-          label: "Rerun ingestion and check recent pipeline alerts for delayed records.",
-          cost: "26 min total", minutes: 26, points: 13, tag: "rerun",
-          outcome: "The rerun succeeds and produces the same wrong total. Engineering then traces the issue to the status mapping, consuming another 12 minutes.",
-          lesson: "Retries help when processing fails. They rarely resolve a semantic error in otherwise valid data."
-        }
-      ]
-    },
-    {
-      phase: "02 / Contain",
-      time: "Before the board briefing",
-      title: "You know the cause. What should leadership see?",
-      brief: "Pending transactions worth $1.1M have been counted as settled revenue. Finance's approved figure is $13.1M. The board still expects the report, and several teams use the same dashboard.",
-      evidence: [
-        ["Settled revenue", "$13.1M", "Matches Finance"],
-        ["Pending included", "+$1.1M", "Not recognized revenue"],
-        ["Root cause", "Mapping", "New status filter"]
-      ],
-      choices: [
-        {
-          label: "Suspend the affected KPI and send a verified figure with its source, owner, and timestamp.",
-          cost: "18 min", minutes: 18, points: 25, tag: "contained",
-          outcome: "The CFO receives an approved $13.1M figure. The affected KPI is clearly marked unavailable until a validated fix is released. Other dashboard sections remain usable.",
-          lesson: "Contain only the unreliable output, establish a source of truth, and tell decision makers what is safe to use."
-        },
-        {
-          label: "Keep the dashboard available with a prominent discrepancy warning and a Finance report link.",
-          cost: "10 min", minutes: 10, points: 19, tag: "warning",
-          outcome: "Leadership has a route to the correct figure, but users can still export the incorrect KPI without its warning. A communication follow-up is required.",
-          lesson: "Clear warnings reduce confusion, but exports and downstream consumers can separate numbers from their context."
-        },
-        {
-          label: "Hotfix the dashboard filter immediately and publish after a quick spot check.",
-          cost: "25 min", minutes: 25, points: 14, tag: "hotfix",
-          outcome: "The headline total now matches Finance. However, the expedited change has not been tested against the full set of downstream reports.",
-          lesson: "A fast correction may be appropriate, but an unreviewed fix can create a new incident."
-        }
-      ]
-    },
-    {
-      phase: "03 / Prevent",
-      time: "The next 10 business days",
-      title: "The pipeline was healthy. The data definition was not.",
-      brief: "The source change was technically valid, so it passed routine checks. You have a limited improvement window. Which control would you prioritize first?",
-      evidence: [
-        ["Broken process", "No signoff", "Business rule changed"],
-        ["Existing tests", "Passed", "Checked types and runs"],
-        ["Affected output", "Revenue", "Board-critical metric"]
-      ],
-      choices: [
-        {
-          label: "Approve 1 revenue definition, assign its owner, and automate a ledger reconciliation test.",
-          cost: "About 1 week", points: 25, tag: "contract",
-          outcome: "Finance and Engineering agree on settled revenue. A reconciliation test now blocks publication when the approved total and published metric diverge.",
-          lesson: "Connect a business definition to a named owner and a measurable, automated control."
-        },
-        {
-          label: "Require review of source mapping changes and sample critical records after each release.",
-          cost: "About 3 days", points: 20, tag: "review",
-          outcome: "Changes receive explicit review and spot checks. This reduces release risk, although an untested discrepancy can still slip through.",
-          lesson: "Change control is useful, but sampling alone does not provide the coverage of an automated business reconciliation."
-        },
-        {
-          label: "Introduce variance alerts and an incident playbook for executive reporting.",
-          cost: "About 2 days", points: 16, tag: "monitor",
-          outcome: "The team can detect large shifts and respond faster. A quiet but systematic reporting error could still go unnoticed.",
-          lesson: "Observability improves detection and recovery. It does not replace agreeing on what the metric means."
-        }
-      ]
-    },
-    {
-      phase: "04 / Decide",
-      time: "4 weeks later",
-      title: "The CEO now wants a revenue forecasting pilot.",
-      brief: "A small forecasting use case could help planning. Its inputs depend on the same revenue domain. What is the most useful next step?",
-      evidence: [
-        ["Business goal", "Forecast", "Support monthly planning"],
-        ["Data dependency", "Revenue", "Recently corrected"],
-        ["Decision impact", "Moderate", "Planning, not automation"]
-      ],
-      choices: [
-        {
-          label: "Pilot on approved data with time-based backtesting, named reviewers, and monitoring.",
-          cost: "Controlled pilot", points: 25, tag: "governed",
-          outcome: "The pilot produces a baseline forecast and a documented error range. Finance reviews the results before they influence a planning decision.",
-          lesson: "AI readiness is about fit-for-purpose data, accountable review, measurable performance, and controlled use."
-        },
-        {
-          label: "Build an offline prototype and require a signed input assessment before production use.",
-          cost: "Offline only", points: 21, tag: "offline",
-          outcome: "The team learns whether forecasting is useful without making a production claim. The input assessment is a clear gate before deployment.",
-          lesson: "An offline prototype is a responsible option when controls are still maturing. Its outputs should not drive live decisions."
-        },
-        {
-          label: "Test historical exports in a sandbox and document limitations before seeking approval.",
-          cost: "Exploration", points: 16, tag: "sandbox",
-          outcome: "The experiment establishes a rough baseline, but inconsistent historical definitions limit what the results can prove.",
-          lesson: "Exploration is legitimate. The boundaries of the dataset and the purpose of the experiment must remain explicit."
-        }
-      ]
-    }
-  ];
-
-  const CSS = `
-    .svr-retired { display: none !important; }
-    .svr-app { --svr-ink:#182c43; --svr-muted:#5e6d7c; --svr-border:#d8e2eb; --svr-blue:#174c83; --svr-pale:#f3f7fb; color:var(--svr-ink); font:inherit; max-width:920px; margin:0 auto; }
-    .svr-app * { box-sizing:border-box; }
-    .svr-head { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:19px; }
-    .svr-eyebrow { text-transform:uppercase; font-size:.72rem; letter-spacing:.13em; font-weight:750; color:var(--svr-blue); }
-    .svr-status { display:flex; flex-wrap:wrap; gap:8px; }
-    .svr-chip { font-size:.8rem; padding:7px 10px; border:1px solid var(--svr-border); border-radius:40px; background:#fff; color:var(--svr-ink); font-weight:650; }
-    .svr-chip-warn { background:#fff5e7; border-color:#e8d3ad; color:#785014; }
-    .svr-track { height:5px; background:#e4ecf3; overflow:hidden; border-radius:10px; margin-bottom:25px; }
-    .svr-track span { display:block; background:#2667a1; height:100%; transition:width .2s ease; }
-    .svr-time { font-weight:700; color:var(--svr-blue); margin:0 0 7px; font-size:.86rem; }
-    .svr-title { font-size:clamp(1.3rem, 2.7vw, 1.9rem); line-height:1.22; letter-spacing:-.025em; color:var(--svr-ink); margin:0 0 12px; }
-    .svr-brief { font-size:1rem; line-height:1.65; color:#3c4d5f; margin:0 0 20px; max-width:780px; }
-    .svr-branch { margin:0 0 18px; padding:12px 15px; background:#fff7eb; border-left:3px solid #ce9850; border-radius:4px; color:#695124; font-size:.9rem; line-height:1.5; }
-    .svr-kicker { font-size:.77rem; letter-spacing:.07em; font-weight:750; text-transform:uppercase; margin:19px 0 11px; color:var(--svr-muted); }
-    .svr-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
-    .svr-fact { background:var(--svr-pale); border:1px solid var(--svr-border); border-radius:11px; padding:15px; min-width:0; }
-    .svr-fact-name { font-size:.77rem; color:var(--svr-muted); margin-bottom:9px; }
-    .svr-fact-value { font-size:clamp(1rem, 2.4vw, 1.25rem); font-weight:750; margin-bottom:5px; word-break:break-word; }
-    .svr-fact-note { font-size:.77rem; color:var(--svr-muted); line-height:1.45; }
-    .svr-options { display:grid; gap:10px; margin-top:10px; }
-    .svr-option { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; text-align:left; background:#fff; border:1px solid var(--svr-border); border-radius:11px; padding:17px 18px; color:var(--svr-ink); cursor:pointer; font:inherit; transition:border-color .16s,box-shadow .16s,transform .16s; }
-    .svr-option:hover { border-color:#5a86b0; box-shadow:0 4px 16px rgba(23,76,131,.09); transform:translateY(-1px); }
-    .svr-option:focus-visible, .svr-button:focus-visible, .svr-link:focus-visible, .svr-details summary:focus-visible { outline:3px solid #4e91cb; outline-offset:3px; }
-    .svr-option-main { display:flex; align-items:flex-start; gap:12px; min-width:0; line-height:1.5; font-size:.92rem; }
-    .svr-letter { flex-shrink:0; display:grid; place-items:center; width:28px; height:28px; background:#eaf1f7; border-radius:7px; font-size:.78rem; font-weight:750; }
-    .svr-effort { color:var(--svr-blue); font-size:.75rem; flex-shrink:0; font-weight:700; white-space:nowrap; }
-    .svr-explain { border:1px solid #c4dacf; background:#f5faf7; border-radius:12px; padding:20px; margin-top:22px; }
-    .svr-explain-label { font-size:.75rem; font-weight:800; color:#28724f; letter-spacing:.08em; text-transform:uppercase; margin:0 0 10px; }
-    .svr-explain p { font-size:.93rem; line-height:1.65; margin:0 0 12px; }
-    .svr-explain p:last-of-type { margin-bottom:0; }
-    .svr-explain strong { color:#173d30; }
-    .svr-note { font-size:.8rem; color:var(--svr-muted); margin-top:12px; line-height:1.5; }
-    .svr-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-top:18px; }
-    .svr-button { background:var(--svr-blue); color:#fff; border:1px solid var(--svr-blue); border-radius:9px; padding:12px 19px; font:inherit; font-weight:750; font-size:.92rem; cursor:pointer; text-decoration:none; display:inline-block; }
-    .svr-button:hover { background:#103c6b; color:#fff; }
-    .svr-button-outline { color:var(--svr-blue); background:#fff; }
-    .svr-button-outline:hover { background:#eef5fb; color:var(--svr-blue); }
-    .svr-link { font-size:.91rem; font-weight:650; color:var(--svr-blue); text-decoration:underline; }
-    .svr-disclaimer { margin:17px 0 0; font-size:.77rem; color:var(--svr-muted); line-height:1.5; }
-    .svr-score { font-size:clamp(2.5rem, 6vw, 4.2rem); font-weight:800; letter-spacing:-.06em; line-height:1.05; color:#164d80; margin:14px 0 12px; }
-    .svr-score small { font-size:.35em; font-weight:700; letter-spacing:0; color:var(--svr-muted); }
-    .svr-lead { font-size:1.02rem; line-height:1.6; max-width:730px; color:#405468; }
-    .svr-outcomes { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:22px 0; }
-    .svr-outcome { border:1px solid var(--svr-border); border-radius:10px; background:var(--svr-pale); padding:14px 16px; line-height:1.5; font-size:.9rem; }
-    .svr-outcome strong { display:block; font-size:.76rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px; }
-    .svr-method { padding:18px 20px; border-radius:12px; background:#edf4fb; margin:22px 0; }
-    .svr-method h3 { margin:0 0 9px; font-size:1rem; color:var(--svr-ink); }
-    .svr-method p { margin:0; line-height:1.6; font-size:.9rem; }
-    .svr-details { border-top:1px solid var(--svr-border); margin-top:22px; padding-top:17px; }
-    .svr-details summary { font-weight:700; cursor:pointer; color:var(--svr-blue); }
-    .svr-details ol { margin:15px 0 0; padding-left:20px; }
-    .svr-details li { padding:0 0 12px 4px; line-height:1.5; font-size:.9rem; }
-    .svr-details li span { display:block; color:var(--svr-muted); font-size:.84rem; margin-top:2px; }
-    .svr-live { color:var(--svr-blue); font-size:.83rem; font-weight:650; }
-    @media (max-width:620px) {
-      .svr-facts { grid-template-columns:1fr 1fr; }
-      .svr-fact:last-child:nth-child(odd) { grid-column:1 / -1; }
-      .svr-fact { padding:12px; }
-      .svr-outcomes { grid-template-columns:1fr; }
-      .svr-option { align-items:flex-start; flex-direction:column; gap:9px; padding:14px; }
-      .svr-effort { margin-left:40px; }
-    }
-    @media (prefers-reduced-motion:reduce) { .svr-option, .svr-track span { transition:none; } }
-  `;
-
-  let state;
-  let scenarioHost;
-  let resultHost;
-
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, (char) => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    })[char]);
-  }
-
-  function retireOldMetric(id, label) {
-    const node = byId(id);
-    if (!node) return;
-    let parent = node.parentElement;
-    for (let depth = 0; depth < 4 && parent; depth += 1, parent = parent.parentElement) {
-      const text = (parent.textContent || "").replace(/\s+/g, " ").trim();
-      // Hide only the individual score tile, never the whole scores grid or page.
-      if (text.toLowerCase().includes(label.toLowerCase()) &&
-          text.length < 80 && parent.querySelectorAll('[id$="Score"]').length === 1) {
-        parent.classList.add("svr-retired");
-        break;
-      }
-    }
-  }
-
-  function updateOriginalIntro() {
-    const paragraphs = document.querySelectorAll("main p, article p, section p");
-    for (const paragraph of paragraphs) {
-      if (paragraph.textContent.includes("You are the new technology advisor for Northstar Services.")) {
-        paragraph.textContent = "Northstar Services has a $1.1M discrepancy in its executive revenue report. You have 45 minutes before the board briefing. Investigate the evidence, contain the risk, and decide what to fix next in 4 practical decisions. About 3 minutes to play.";
-        break;
-      }
-    }
-  }
-
-  function init() {
-    state = { index: 0, selected: null, remaining: TOTAL_MINUTES, score: 0, history: [], tags: [] };
-    resultHost.hidden = true;
-    scenarioHost.hidden = false;
-    byId("eventCard")?.setAttribute("hidden", "");
-    renderStep();
-  }
-
-  function branchMessage() {
-    if (state.index === 2) {
-      const containment = state.tags[1];
-      if (containment === "warning") return "Earlier decision: The dashboard stayed live with a warning. A downstream export may still carry the wrong figure without its explanation.";
-      if (containment === "hotfix") return "Earlier decision: The hotfix corrected the headline figure, but its impact on downstream reports still needs validation.";
-    }
-    if (state.index === 3) {
-      const prevention = state.tags[2];
-      if (prevention === "review") return "Earlier decision: You introduced change reviews, but the revenue feed still lacks an automated ledger tie-out.";
-      if (prevention === "monitor") return "Earlier decision: You improved alerting, but no automated check yet establishes that published revenue matches the approved definition.";
-    }
-    return "";
-  }
-
-  function renderStep() {
-    const step = STEPS[state.index];
-    const factCards = step.evidence.map(([name, value, note]) => `
-      <div class="svr-fact">
-        <div class="svr-fact-name">${escapeHtml(name)}</div>
-        <div class="svr-fact-value">${escapeHtml(value)}</div>
-        <div class="svr-fact-note">${escapeHtml(note)}</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Data Platform Rescue | Stevox Lab</title><meta name="description" content="An interactive Stevox Lab simulation about data architecture, governance, reliability, and AI readiness."><link rel="canonical" href="https://stevox.ca/games/data-platform-rescue/"><meta property="og:title" content="Data Platform Rescue | Stevox Lab"><meta property="og:description" content="An interactive Stevox Lab simulation about data architecture, governance, reliability, and AI readiness."><meta property="og:type" content="website"><meta property="og:url" content="https://stevox.ca/games/data-platform-rescue/"><meta property="og:image" content="https://stevox.ca/stevox-logo-horizontal.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/Logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/insights-lab.css"></head><body><a href="#main" class="skip-link">Skip to content</a><header><div class="container navbar"><a href="/" class="brand-logo" aria-label="Stevox Consulting home"><img src="/stevox-logo-horizontal.png" alt="Stevox"></a><button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button><nav class="nav-links" id="navLinks" aria-label="Primary navigation"><a href="/" data-page="home">Home</a><a href="/services/" data-page="services">Services</a><a href="/about/" data-page="about">About</a><a href="/leadership/" data-page="leadership">Leadership</a><a href="/expertise/" data-page="expertise">Expertise</a><a href="/insights/" data-page="insights">Insights</a><a href="/lab/" data-page="lab">Lab</a><a href="/contact/" class="nav-contact" data-page="contact">Contact</a></nav></div></header>
+<main id="main">
+  <section class="sil-game-page">
+    <div class="container sil-game-shell">
+      <a class="sil-back" href="/lab/">← Back to Stevox Lab</a>
+      <div class="sil-game-heading">
+        <span class="eyebrow">Interactive simulation</span>
+        <h1>Data Platform Rescue</h1>
+        <p>You are the new technology advisor for Northstar Services. The data platform is unstable, executives do not trust the dashboards, and leadership wants an AI initiative in 6 months. You have <strong>$900K</strong>, 3 rounds, and 12 decisions. Some choices will create consequences you will not see immediately.</p>
       </div>
-    `).join("");
-    const options = step.choices.map((option, index) => `
-      <button type="button" class="svr-option" data-choice="${index}">
-        <span class="svr-option-main"><span class="svr-letter" aria-hidden="true">${"ABC"[index]}</span><span>${escapeHtml(option.label)}</span></span>
-        <span class="svr-effort">${escapeHtml(option.cost)}</span>
-      </button>
-    `).join("");
-    const phaseInfo = state.index < 2
-      ? `<span class="svr-chip ${state.remaining <= 15 ? "svr-chip-warn" : ""}">${state.remaining > 0 ? `${state.remaining} min until briefing` : `${Math.abs(state.remaining)} min past briefing`}</span>`
-      : `<span class="svr-chip">Follow-up plan</span>`;
-    const earlier = branchMessage();
 
-    scenarioHost.innerHTML = `
-      <div class="svr-app" aria-label="Data Platform Rescue interactive case">
-        <div class="svr-head"><div class="svr-eyebrow">Northstar / Case 01</div>
-          <div class="svr-status"><span class="svr-chip">Decision ${state.index + 1} of ${STEPS.length}</span>${phaseInfo}</div>
-        </div>
-        <div class="svr-track" aria-label="Progress: ${state.index} of ${STEPS.length} decisions completed"><span style="width:${state.index / STEPS.length * 100}%"></span></div>
-        <p class="svr-time">${escapeHtml(step.time)} · ${escapeHtml(step.phase)}</p>
-        <h2 class="svr-title">${escapeHtml(step.title)}</h2>
-        <p class="svr-brief">${escapeHtml(step.brief)}</p>
-        ${earlier ? `<p class="svr-branch">${escapeHtml(earlier)}</p>` : ""}
-        <div class="svr-kicker">What you know</div>
-        <div class="svr-facts">${factCards}</div>
-        <div class="svr-kicker">Your next move</div>
-        <div class="svr-options">${options}</div>
-        <p class="svr-disclaimer">Fictional case. Figures and outcomes are illustrative. All choices include tradeoffs.</p>
+      <div class="sil-game-dashboard sil-game-dashboard-six">
+        <div><span>Reliability</span><strong id="reliabilityScore">42</strong></div>
+        <div><span>Governance</span><strong id="governanceScore">35</strong></div>
+        <div><span>Business value</span><strong id="valueScore">48</strong></div>
+        <div><span>Architecture</span><strong id="architectureScore">38</strong></div>
+        <div><span>Confidence</span><strong id="confidenceScore">44</strong></div>
+        <div><span>Budget</span><strong id="budgetScore">$900K</strong></div>
       </div>
-    `;
-  }
 
-  function choose(index) {
-    if (state.selected !== null || !Number.isInteger(index)) return;
-    const step = STEPS[state.index];
-    const choice = step.choices[index];
-    if (!choice) return;
-
-    state.selected = index;
-    state.score += choice.points;
-    state.remaining -= choice.minutes || 0;
-    state.tags.push(choice.tag);
-    state.history.push({ title: step.phase, choice: choice.label, finding: choice.lesson });
-
-    const deadlineNote = state.index === 1 && state.remaining < 0
-      ? `The briefing deadline was missed by ${Math.abs(state.remaining)} minutes. The delay will affect the final result.`
-      : "";
-    scenarioHost.querySelectorAll("[data-choice]").forEach((button) => {
-      button.disabled = true;
-      button.setAttribute("aria-disabled", "true");
-      button.style.cursor = "default";
-      button.style.opacity = Number(button.dataset.choice) === index ? "1" : ".48";
-      if (Number(button.dataset.choice) === index) {
-        button.style.borderColor = "#377759";
-        button.style.background = "#f2faf5";
-      }
-    });
-
-    const panel = document.createElement("div");
-    panel.className = "svr-explain";
-    panel.setAttribute("role", "status");
-    panel.innerHTML = `
-      <div class="svr-explain-label">What happens next</div>
-      <p>${escapeHtml(choice.outcome)}</p>
-      <p><strong>The reasoning:</strong> ${escapeHtml(choice.lesson)}</p>
-      ${deadlineNote ? `<p class="svr-branch">${escapeHtml(deadlineNote)}</p>` : ""}
-      <div class="svr-actions"><button type="button" class="svr-button" data-next="true">${state.index === STEPS.length - 1 ? "See your case outcome" : "Continue the case"}</button></div>
-    `;
-    scenarioHost.querySelector(".svr-options").insertAdjacentElement("afterend", panel);
-    panel.querySelector("[data-next]").focus({ preventScroll: true });
-    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-
-  function next() {
-    if (state.selected === null) return;
-    state.selected = null;
-    state.index += 1;
-    if (state.index === STEPS.length) finish();
-    else renderStep();
-    (state.index === STEPS.length ? resultHost : scenarioHost).scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function finish() {
-    scenarioHost.hidden = true;
-    resultHost.hidden = false;
-    const missed = state.remaining < 0;
-    const points = Math.max(0, state.score - (missed ? 6 : 0));
-    const containment = state.tags[1];
-    const prevention = state.tags[2];
-    const ai = state.tags[3];
-    const heading = points >= 90 && !missed ? "Board-ready with a sustainable plan" :
-      points >= 75 ? "The incident is contained, with follow-up work" : "Important control gaps remain";
-    const intro = points >= 90 && !missed
-      ? "You found the business error, protected the briefing, and prioritized controls that make the data safer to reuse."
-      : points >= 75
-        ? "You made defensible decisions, but some risk remains in reporting, verification, or downstream use."
-        : "Your choices created a workable response in places, but reporting reliability still depends on incomplete controls.";
-    const reportStatus = containment === "contained" ? "Verified source shared, affected KPI held." :
-      containment === "warning" ? "Correct figure linked, incorrect KPI still accessible." :
-      "Dashboard hotfix made, full validation pending.";
-    const controlStatus = prevention === "contract" ? "Owned definition and automated ledger reconciliation." :
-      prevention === "review" ? "Change approval and sampling, without full reconciliation." :
-      "Variance monitoring, without a semantic contract.";
-    const aiStatus = ai === "governed" ? "Controlled pilot with review and backtesting." :
-      ai === "offline" ? "Offline prototype with a production gate." :
-      "Sandbox exploration only, limited evidence.";
-    const briefing = missed ? `${Math.abs(state.remaining)} min late` : `${state.remaining} min to spare`;
-    const list = state.history.map((entry) => `
-      <li><strong>${escapeHtml(entry.title)}:</strong> ${escapeHtml(entry.choice)}
-        <span>${escapeHtml(entry.finding)}</span></li>
-    `).join("");
-
-    resultHost.innerHTML = `
-      <div class="svr-app">
-        <div class="svr-eyebrow">Your Northstar case outcome</div>
-        <div class="svr-score">${points}<small> / 100</small></div>
-        <h2 class="svr-title">${escapeHtml(heading)}</h2>
-        <p class="svr-lead">${escapeHtml(intro)}</p>
-        <div class="svr-outcomes">
-          <div class="svr-outcome"><strong>Board briefing</strong>${escapeHtml(briefing)}. ${escapeHtml(reportStatus)}</div>
-          <div class="svr-outcome"><strong>Preventive control</strong>${escapeHtml(controlStatus)}</div>
-          <div class="svr-outcome"><strong>AI readiness</strong>${escapeHtml(aiStatus)}</div>
-          <div class="svr-outcome"><strong>Assessment basis</strong>Evidence, containment, prevention, and controlled reuse.</div>
-        </div>
-        <div class="svr-method">
-          <h3>How STEVOX approaches this type of problem.</h3>
-          <p><strong>Trace the evidence.</strong> Identify the data source and business definition. <strong>Contain the impact.</strong> Protect decisions before changing systems. <strong>Fix the control.</strong> Assign ownership and make correctness testable. <strong>Enable the next use case.</strong> Reuse data only within documented limits.</p>
-        </div>
-        <div class="svr-actions">
-          <button type="button" class="svr-button" data-restart="true">Try another approach</button>
-          <button type="button" class="svr-button svr-button-outline" data-share="true">Share this challenge</button>
-          <a class="svr-link" href="/services/">How STEVOX works</a>
-        </div>
-        <div class="svr-live" aria-live="polite" id="svrShareStatus"></div>
-        <details class="svr-details"><summary>Review your 4 decisions</summary><ol>${list}</ol></details>
-        <p class="svr-disclaimer">This fictional simulation is educational. The score is a game rubric, not a professional assessment of an organization.</p>
+      <div class="sil-progress">
+        <span id="progressText">Round 1 · Decision 1 of 12</span>
+        <div><span id="progressBar" style="width:20%"></span></div>
       </div>
-    `;
-    state.finalPoints = points;
-  }
 
-  async function share() {
-    const text = `I scored ${state.finalPoints}/100 on STEVOX Data Platform Rescue. Can you resolve the $1.1M revenue discrepancy?`;
-    const status = byId("svrShareStatus");
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "Data Platform Rescue | STEVOX Lab", text, url: CASE_URL });
-        return;
-      }
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(`${text} ${CASE_URL}`);
-        status.textContent = "Challenge link and result copied.";
-        return;
-      }
-      window.prompt("Copy your challenge link:", `${text} ${CASE_URL}`);
-    } catch (error) {
-      if (error?.name !== "AbortError") {
-        status.textContent = "Sharing was unavailable. You can copy this page's address to invite someone.";
-      }
-    }
-  }
+      <div id="eventCard" class="sil-event-card" hidden></div>
+      <section id="scenarioCard" class="sil-scenario-card">
+        <div class="sil-scenario-kicker" id="scenarioKicker"></div>
+        <h2 id="scenarioTitle"></h2>
+        <p id="scenarioText"></p>
+        <div id="choices" class="sil-choice-grid"></div>
+      </section>
 
-  function mount() {
-    scenarioHost = byId("scenarioCard");
-    resultHost = byId("resultCard");
-    if (!scenarioHost || !resultHost) {
-      console.warn("Data Platform Rescue: expected #scenarioCard and #resultCard.");
-      return;
-    }
-    if (!byId("svrStyles")) {
-      const style = document.createElement("style");
-      style.id = "svrStyles";
-      style.textContent = CSS;
-      document.head.appendChild(style);
-    }
-    scenarioHost.classList.add("svr-host");
-    resultHost.classList.add("svr-host");
-    [
-      ["reliabilityScore", "Reliability"], ["governanceScore", "Governance"],
-      ["valueScore", "Business value"], ["architectureScore", "Architecture"],
-      ["confidenceScore", "Confidence"], ["budgetScore", "Budget"]
-    ].forEach(([id, label]) => retireOldMetric(id, label));
-    updateOriginalIntro();
-    scenarioHost.addEventListener("click", (event) => {
-      const choice = event.target.closest("[data-choice]");
-      if (choice && scenarioHost.contains(choice)) choose(Number(choice.dataset.choice));
-      const nextButton = event.target.closest("[data-next]");
-      if (nextButton && scenarioHost.contains(nextButton)) next();
-    });
-    resultHost.addEventListener("click", (event) => {
-      if (event.target.closest("[data-restart]")) init();
-      if (event.target.closest("[data-share]")) share();
-    });
-    init();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", mount, { once: true });
-  } else {
-    mount();
-  }
-})();
+      <section id="resultCard" class="sil-result-card" hidden>
+        <span class="eyebrow">Simulation result</span>
+        <div class="sil-result-score" id="finalScore"></div>
+        <h2 id="resultTitle"></h2>
+        <p id="resultText"></p>
+        <div class="sil-result-breakdown sil-result-breakdown-six">
+          <div><span>Reliability</span><strong id="finalReliability"></strong></div>
+          <div><span>Governance</span><strong id="finalGovernance"></strong></div>
+          <div><span>Business value</span><strong id="finalValue"></strong></div>
+          <div><span>Architecture</span><strong id="finalArchitecture"></strong></div>
+          <div><span>Confidence</span><strong id="finalConfidence"></strong></div>
+          <div><span>Budget remaining</span><strong id="finalBudget"></strong></div>
+        </div>
+        <div id="achievementArea" class="sil-achievements"></div>
+        <details class="sil-history">
+          <summary>Review your 12 decisions</summary>
+          <ol id="decisionHistory"></ol>
+        </details>
+        <div class="sil-result-actions">
+          <button class="button button-secondary" id="restartGame" type="button">Play again</button>
+          <a class="button button-primary" href="/services/">Explore our services</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+<footer><div class="container footer-inner"><div><div class="footer-brand">Stevox Consulting Inc.</div><div>Ottawa, Ontario, Canada.</div><div>© 2026 Stevox Consulting Inc. All rights reserved.</div></div><div class="footer-links"><a href="/services/">Services</a><a href="/about/">About</a><a href="/leadership/">Leadership</a><a href="/expertise/">Expertise</a><a href="/insights/">Insights</a><a href="/lab/">Lab</a><a href="/contact/">Contact</a></div></div></footer><script src="/script.js"></script><script src="/games/data-platform-rescue.js"></script><script>document.querySelector('[data-page="lab"]').classList.add('active');</script></body></html>
